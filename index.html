@@ -58,14 +58,25 @@
       function render() {
 
         // Edges
-        let lines = bubbleLayer.selectAll("line.link").data(nameBubbleData)
+        // let lines = bubbleLayer.selectAll("line.link").data(nameBubbleData)
+        //      .join(
+        //        enter => enter.append("line")
+        //                      .attr("class","link")
+        //                      .attr("stroke","#333")
+        //      )
+        //      .attr("x1", d => d.x).attr("x2", 1)
+        //      .attr("y1", d => d.y).attr("y2", 1);
+
+
+        let labels = bubbleLegend.selectAll("text.label").data(nameBubbleData)
              .join(
-               enter => enter.append("line")
-                             .attr("class","link")
-                             .attr("stroke","#333")
+               enter => enter.append("text")
+                             .attr("class","label")
+                             //.attr("stroke","#333")
+                             .text(function(d){return d["Child's First name"]})
+          
              )
-             .attr("x1", d => d.x).attr("x2", 1)
-             .attr("y1", d => d.y).attr("y2", 1);
+             .attr("x", d => d.x).attr("y", d => d.y)
 
         // Nodes
         let circles = bubbleLayer.selectAll("circle.node").data(nameBubbleData)
