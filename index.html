@@ -1,9 +1,16 @@
 <html>
 <head>
   <script src="https://d3js.org/d3.v6.min.js"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Pangolin&display=swap');
+    text{
+      font-family: 'Pangolin', cursive;
+      font-size: 15px
+    }
+  </style>
 </head>
 <body>
-	<svg id="bubbleGraph" height="900" width="800" style="background: #sff; " ></svg>
+	<svg id="bubbleGraph" height="600" width="800" style="background: #sff; " ></svg>
 
   <script>
   	const bubbleLayer = d3.select("#bubbleGraph").append("g");
@@ -30,7 +37,14 @@
 
       const colorScale = d3.scaleOrdinal()
                            .domain(["WHITE NON HISPANIC","HISPANIC","BLACK NON HISPANIC","ASIAN AND PACIFIC ISLANDER"])
-                           .range(["#FEF1E2","#E28E51","#50280D","#FDDEBB"]);
+                           .range(["#FEF1E2","#E28E51","#934914","#FDDEBB"]);
+      const genderColorScale = d3.scaleOrdinal()
+                           .domain(["FEMALE","MALE"])
+                           .range(["pink","#99ccff"]);
+
+
+
+
 
 
 
@@ -43,10 +57,18 @@
                   // .force("repulse", d3.forceManyBody().strength(-150) )
                   .force("ypos", d3.forceY().y(d => rankScale(d.Rank)).strength( 0.8 ) )//y-positioning force, set less than 1.0
                   .force("xpos", d3.forceX().x( d=> {
-                    if (d["Ethnicity"] === "WHITE NON HISPANIC"){return bubblePaddedWidth*0.25}
-                    if (d["Ethnicity"] === "HISPANIC"){return bubblePaddedWidth*0.5}
-                    if (d["Ethnicity"] === "BLACK NON HISPANIC"){return bubblePaddedWidth*0.75}
-                    if (d["Ethnicity"] === "ASIAN AND PACIFIC ISLANDER"){return bubblePaddedWidth}
+                    if (d["Ethnicity"] === "WHITE NON HISPANIC"&&d.Gender ==="MALE"){return bubblePaddedWidth*0.22}
+                    if (d["Ethnicity"] === "WHITE NON HISPANIC"&&d.Gender ==="FEMALE"){return bubblePaddedWidth*0.28}
+                    if (d["Ethnicity"] === "HISPANIC"&&d.Gender ==="MALE"){return bubblePaddedWidth*0.47}
+                    if (d["Ethnicity"] === "HISPANIC"&&d.Gender ==="FEMALE"){return bubblePaddedWidth*0.53}
+                    if (d["Ethnicity"] === "BLACK NON HISPANIC"&&d.Gender ==="MALE"){return bubblePaddedWidth*0.72}
+                    if (d["Ethnicity"] === "BLACK NON HISPANIC"&&d.Gender ==="FEMALE"){return bubblePaddedWidth*0.78}
+                    if (d["Ethnicity"] === "ASIAN AND PACIFIC ISLANDER"&&d.Gender ==="MALE"){return bubblePaddedWidth*0.94}
+                    if (d["Ethnicity"] === "ASIAN AND PACIFIC ISLANDER"&&d.Gender ==="FEMALE"){return bubblePaddedWidth} 
+                    //if (d["Ethnicity"] === "WHITE NON HISPANIC"){return bubblePaddedWidth*0.25}
+                    //if (d["Ethnicity"] === "HISPANIC"){return bubblePaddedWidth*0.5}
+                    // if (d["Ethnicity"] === "BLACK NON HISPANIC"){return bubblePaddedWidth*0.75}
+                    // if (d["Ethnicity"] === "ASIAN AND PACIFIC ISLANDER"){return bubblePaddedWidth}
                     else {return 0}}).strength( 0.8 ) )
                   .force("collision", d3.forceCollide()
                                                        .radius(28)
@@ -74,6 +96,8 @@
                              .attr("class","label")
                              //.attr("stroke","#333")
                              .text(function(d){return d["Child's First name"]})
+                             .attr("text-anchor", "middle")
+                             .attr("alignment-baseline", "middle")
           
              )
              .attr("x", d => d.x).attr("y", d => d.y)
@@ -83,7 +107,7 @@
                .join(
                   enter => enter.append("circle")
                                 .attr("class","node")
-                                .attr("stroke", "pink")
+                                .attr("stroke", d=>genderColorScale(d.Gender))
                                 .attr("stroke-width", 5)
                                 .attr("stroke-alignment","outer")
                                 .attr("r", 26)
