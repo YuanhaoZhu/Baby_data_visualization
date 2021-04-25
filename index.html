@@ -16,12 +16,12 @@
     const bubblePaddedWidth = bubbleWidth - 2*bubblePadding
 
     const requestData = async () => {
-      const bbnames = await d3.csv("Popular_Baby_Names.csv")
+      const bbnames = await d3.csv("Popular_Baby_Names.csv", d3.autoType)
       console.log(bbnames)
 
 
 
-      nameBubbleData = bbnames.filter((d)=>{return d["Rank"] <= 50 && d["Year of Birth"] === "2015";});
+      nameBubbleData = bbnames.filter((d)=>{return d["Rank"] <= 10 && d["Year of Birth"] === 2015;});
 
       console.log(nameBubbleData)
 
@@ -58,14 +58,14 @@
       function render() {
 
         // Edges
-        // let lines = bubbleLayer.selectAll("line.link").data(edges)
-        //      .join(
-        //        enter => enter.append("line")
-        //                      .attr("class","link")
-        //                      .attr("stroke","#333")
-        //      )
-        //      .attr("x1", d => d.source.x).attr("x2", d => d.target.x)
-        //      .attr("y1", d => d.source.y).attr("y2", d => d.target.y);
+        let lines = bubbleLayer.selectAll("line.link").data(nameBubbleData)
+             .join(
+               enter => enter.append("line")
+                             .attr("class","link")
+                             .attr("stroke","#333")
+             )
+             .attr("x1", d => d.x).attr("x2", 1)
+             .attr("y1", d => d.y).attr("y2", 1);
 
         // Nodes
         let circles = bubbleLayer.selectAll("circle.node").data(nameBubbleData)
@@ -85,15 +85,15 @@
                 )
                .attr("transform", d => `translate(${d.x},${d.y})`);
 
-            let texts = bubbleLayer.selectAll(null)
-                   .data(nameBubbleData)
-                   .join(
-                        enter=>enter.append('text')
-                        .text(function(d){return d["Child's First name"]})
-                        .attr('fill', 'black')
-                        .attr('font-size', 15)
-                      )
-                  .attr("transform",d=>`translate(${d.x},${d.y})`);
+            // let texts = bubbleLayer.selectAll(null)
+            //        .data(nameBubbleData)
+            //        .join(
+            //             enter=>enter.append('text')
+            //             .text(function(d){return d["Child's First name"]})
+            //             .attr('fill', 'black')
+            //             .attr('font-size', 15)
+            //           )
+            //       .attr("transform",d=>`translate(${d.x},${d.y})`);
 
 
 
