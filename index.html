@@ -1,8 +1,12 @@
 <html>
+<head>
+  <script src="https://d3js.org/d3.v6.min.js"></script>
+</head>
 <body>
   <script>
     const requestData = async () => {
       const bbnames = await d3.csv("Popular_Baby_Names.csv")
+      console.log(bbnames)
     }
     requestData()
   </script>
