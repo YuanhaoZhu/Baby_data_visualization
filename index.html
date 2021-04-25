@@ -11,6 +11,7 @@
 </head>
 <body>
 	<svg id="bubbleGraph" height="600" width="800" style="background: #sff; " ></svg>
+  <svg id="lineGraph" height="600" width="800" style="background: #sff; " ></svg>
 
   <script>
   	const bubbleLayer = d3.select("#bubbleGraph").append("g");
@@ -41,6 +42,8 @@
       const genderColorScale = d3.scaleOrdinal()
                            .domain(["FEMALE","MALE"])
                            .range(["pink","#99ccff"]);
+
+      console.log(nameBubbleData)
 
 
 
@@ -119,30 +122,61 @@
                                 //                 .on("end",dragend) )
                 )
                .attr("transform", d => `translate(${d.x},${d.y})`);
-
-            // let texts = bubbleLayer.selectAll(null)
-            //        .data(nameBubbleData)
-            //        .join(
-            //             enter=>enter.append('text')
-            //             .text(function(d){return d["Child's First name"]})
-            //             .attr('fill', 'black')
-            //             .attr('font-size', 15)
-            //           )
-            //       .attr("transform",d=>`translate(${d.x},${d.y})`);
+      }//end of render
 
 
 
 
-               //.attr("transform", d => `translate(${d.x},${d.y})`);
+      ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+      //Connected scatter plot, i.e. line chart/////
+      // set the dimensions and margins of the graph
+      const lineGraphLayer = d3.select("#lineGraph").append("g");
+      const lineLegend = d3.select("#lineGraph").append("g");
+      const lineWidth = d3.select("#lineGraph").attr("width");
+      const lineHeight = d3.select("#lineGraph").attr("height");
+      const linePadding = 50
+      const linePaddedHeight = lineHeight - 2*linePadding
+      const linePaddedWidth = lineWidth - 2*linePadding
+
+      
+      var x = d3.scaleTime()
+        .domain(d3.extent(nameBubbleData, d=>d.Count))
+        .range([ 0, lineWidth ]);
+      lineGraphLayer.append("g")
+        .attr("transform", "translate(0," + lineHeight + ")")
+        .call(d3.axisBottom(x));
+      // Add Y axis
+      var y = d3.scaleLinear()
+        .domain( [8000, 9200])
+        .range([ lineHeight, 0 ]);
+      lineGraphLayer.append("g")
+        .call(d3.axisLeft(y));
+      // Add the line
+      lineGraphLayer.append("path")
+        .datum(nameBubbleData)
+        .attr("fill", "none")
+        .attr("stroke", "#69b3a2")
+        .attr("stroke-width", 1.5)
+        .attr("d", d3.line()
+          .x(function(d) { return x(d.date) })
+          .y(function(d) { return y(d.value) })
+          )
+      // Add the points
+      lineGraphLayer.append("g")
+        .selectAll("dot")
+        .data(nameBubbleData)
+        .enter()
+        .append("circle")
+          .attr("cx", function(d) { return x(d.date) } )
+          .attr("cy", function(d) { return y(d.value) } )
+          .attr("r", 5)
+          .attr("fill", "#69b3a2")
+      
+         
 
 
 
-
-
-
-      }
-
-    }
+    }//////DO not delete!!!!!!!!, from await function
     requestData()
   </script>
 </body>
