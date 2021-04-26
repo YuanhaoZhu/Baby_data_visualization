@@ -4,7 +4,7 @@
 </head>
 <body>
 	<svg id="bubbleGraph" height="600" width="800" style="background: #sff; " ></svg>
-
+  <div id="linechart"></div>
   <script>
   	const bubbleLayer = d3.select("#bubbleGraph").append("g");
   	const bubbleLegend = d3.select("#bubbleGraph").append("g");
@@ -17,8 +17,13 @@
 
     const requestData = async () => {
       const bbnames = await d3.csv("Popular_Baby_Names.csv", d3.autoType)
-      console.log(bbnames)
 
+      const nameLineData = bbnames.filter((d)=>{return (d['Year of Birth']>= 2011 && d['Year of Birth']<= 2017)
+                                                    && d['Rank']===1
+                                                    && d["Ethnicity"]==="WHITE NON HISPANIC"
+                                                    && d['Gender']==="FEMALE"
+                                                  });
+      console.log(nameLineData)
 
 
       nameBubbleData = bbnames.filter((d)=>{return d["Rank"] <= 10 && d["Year of Birth"] === 2015;});
@@ -110,26 +115,34 @@
 
 
                //.attr("transform", d => `translate(${d.x},${d.y})`);
-        var margin = {top:10,right:30,bottom:30,left:60};
-        var width = 460 - margin.left - margin.right;
-        var height = 400 - margin.top - margin.bottom;
-        const svg = d3.select("body")
-                            .append("svg")
-                            .attr("width", width + margin.left + margin.right)
-                            .attr("height", height + margin.top + margin.bottom)
-                            .append("g")
-                            .attr("transform",
-                                      "translate(" + margin.left + "," + margin.top + ")");
-        const yearScale = d3.scaleLinear().domain([2012,2017]).range([0,width])
-        let bottomAxis = d3.axisBottom(yearScale).ticks(6)
-        svg.append("g")
-          .attr("transform", "translate(0," + height + ")")
-          .call(bottomAxis);
 
+
+
+
+
+        //let nameScale = d3.scaleLinear().domain()
+        //var linegen = d3.line()
+        //                .x(function(d) {return rankScale(d.rank)})
+        //                .y(function(d) {return rankScale(d.rank)})
 
 
       }
-
+      var margin = {top:10,right:30,bottom:30,left:60};
+      var width = 460 - margin.left - margin.right;
+      var height = 400 - margin.top - margin.bottom;
+      const svg = d3.select("#linechart")
+                          .append("svg")
+                          .attr("width", width + margin.left + margin.right)
+                          .attr("height", height + margin.top + margin.bottom)
+                          .append("g")
+                          .attr("transform",
+                                    "translate(" + margin.left + "," + margin.top + ")");
+      let yearScale = d3.scaleLinear().domain([2011,2017]).range([0,width])
+      let bottomAxis = d3.axisBottom(yearScale).ticks(7)
+      svg.append("g")
+        .attr("class","x axis")
+        .attr("transform", "translate(0," + height + ")")
+        .call(bottomAxis);
     }
     requestData()
   </script>
