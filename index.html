@@ -289,17 +289,29 @@ svg.append("g")
   .attr("transform", "translate(0," + height + ")")
   .call(bottomAxis);
 const countExtent = d3.extent(nameLineData,d=>d['Count'])
-const countScale = d3.scaleLinear().domain(countExtent).range([0,width])
+const countScale = d3.scaleLinear().domain(countExtent).range([0,height])
 console.log(countExtent)
 var lineGen = d3.line()
-                .y(d=>countScale(d['Count']))
-                .x(d=>yearScale(d['Year of Birth']))
+                .x(function(d) {return yearScale(d['Year of Birth'])})
+                .y(function(d){return countScale(d['Count'])})
+
+                .curve(d3.curveMonotoneX);
+
 svg.append("path")
    .datum(nameLineData)
    .attr("class","line")
    .attr("fill","none")
    .attr("stroke","steelblue")
    .attr("d",lineGen);
+     svg.append("g")
+     .selectAll("dot")
+     .data(nameLineData)
+     .enter()
+     .append("circle")
+       .attr("cx", function(d) {return yearScale(d['Year of Birth'])})
+       .attr("cy", function(d){return countScale(d['Count'])})
+       .attr("r", 5)
+       .attr("fill", "#69b3a2")
 
 // Create a rect on top of the svg area: this rectangle recovers mouse position
   svg
