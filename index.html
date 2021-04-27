@@ -164,7 +164,7 @@ const ethnicity = ["WHITE NON HISPANIC","HISPANIC","BLACK NON HISPANIC","ASIAN A
 
 const barColorScale = d3.scaleOrdinal()
                      .domain(ethnicity)
-                     .range(["#FEF1E2","#E28E51","#50280D","#FDDEBB","#687980"]);
+                     .range(["#FEF1E2","#E28E51","#934914","#FDDEBB","#687980"]);
 //Ethnicity scale
 const ethnicityScale = d3.scaleBand().domain(ethnicity).range([barPadding, barChartWidth-50]).padding(0.08);
 let ethnicityAxis= d3.axisBottom(ethnicityScale);
@@ -259,6 +259,7 @@ barLayer.append("text")
          .attr("font-size","18px")
          .text('Number of New Born Babies');
 
+////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //Line chart
 var margin = {top:10,right:30,bottom:30,left:60};
 var width = 460 - margin.left - margin.right;
