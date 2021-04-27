@@ -4,6 +4,11 @@
   <script src="https://d3js.org/d3.v6.min.js"></script>
   <script src="https://d3js.org/d3-collection.v1.min.js"></script>
   <style>
+    @import url('https://fonts.googleapis.com/css2?family=Pangolin&display=swap');
+    text{
+      font-family: 'Pangolin', cursive;
+      font-size: 15px
+    }
     .bar{
       position: absolute;
       right:10px
@@ -65,7 +70,10 @@
 
       const colorScale = d3.scaleOrdinal()
                            .domain(["WHITE NON HISPANIC","HISPANIC","BLACK NON HISPANIC","ASIAN AND PACIFIC ISLANDER"])
-                           .range(["#FEF1E2","#E28E51","#50280D","#FDDEBB"]);
+                           .range(["#FEF1E2","#E28E51","#934914","#FDDEBB"]);
+      const genderColorScale = d3.scaleOrdinal()
+                           .domain(["FEMALE","MALE"])
+                           .range(["pink","#99ccff"]);
 
 
 
@@ -109,6 +117,9 @@
                              .attr("class","label")
                              //.attr("stroke","#333")
                              .text(function(d){return d["Child's First name"]})
+                             .attr("text-anchor", "middle")
+                             .attr("alignment-baseline", "middle")
+
 
              )
              .attr("x", d => d.x).attr("y", d => d.y)
@@ -118,7 +129,7 @@
                .join(
                   enter => enter.append("circle")
                                 .attr("class","node")
-                                .attr("stroke", "pink")
+                                .attr("stroke", d=>genderColorScale(d.Gender))
                                 .attr("stroke-width", 5)
                                 .attr("stroke-alignment","outer")
                                 .attr("r", 26)
