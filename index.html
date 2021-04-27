@@ -27,7 +27,8 @@
       <select id="selectButton"></select>
     </div>
   </div>
-	<svg id="bubbleGraph" height="600" width="800" style="background: #sff; " ></svg>
+	<svg id="bubbleGraph" height="350" width="800" style="background: #sff; " ></svg>
+  <svg id="lineGraph" height="600" width="800" style="background: #sff; " ></svg>
   <div id="linechart"></div>
   <script>
   	const bubbleLayer = d3.select("#bubbleGraph").append("g");
@@ -61,7 +62,7 @@
       console.log(nameLineData)
 
 
-      nameBubbleData = bbnames.filter((d)=>{return d["Rank"] <= 10 && d["Year of Birth"] === 2015;});
+      nameBubbleData = bbnames.filter((d)=>{return d["Rank"] <= 5 && d["Year of Birth"] === 2015;});
 
       console.log(nameBubbleData)
 
@@ -300,13 +301,106 @@ svg.append("path")
    .attr("stroke","steelblue")
    .attr("d",lineGen);
 
+// Create a rect on top of the svg area: this rectangle recovers mouse position
+  svg
+    .append('rect')
+    .style("fill", "none")
+    .style("pointer-events", "all")
+    .attr('width', width)
+    .attr('height', height)
+    .on('mouseover', mouseover)
+    .on('mousemove', mousemove)
+    .on('mouseout', mouseout);
+
+
+    // This allows to find the closest X index of the mouse:
+  var bisect = d3.bisector(function(d) { return d.x; }).left;
+
+  // Create the circle that travels along the curve of chart
+  var focus = svg
+    .append('g')
+    .append('circle')
+      .style("fill", "none")
+      .attr("stroke", "black")
+      .attr('r', 8.5)
+      .style("opacity", 0)
+
+  // Create the text that travels along the curve of chart
+  var focusText = svg
+    .append('g')
+    .append('text')
+      .style("opacity", 0)
+      .attr("text-anchor", "left")
+      .attr("alignment-baseline", "middle")
+
+  // Add the line
+  svg
+    .append("path")
+    .datum(nameLineData)
+    .attr("fill", "none")
+    .attr("stroke", "steelblue")
+    .attr("stroke-width", 1.5)
+    .attr("d", d3.line()
+      .x(function(d) { return yearScale(d["Year of Birth"]) })
+      .y(function(d) { return countScale(d.Count) })
+      )
+
+  // Create a rect on top of the svg area: this rectangle recovers mouse position
+  svg
+    .append('rect')
+    .style("fill", "none")
+    .style("pointer-events", "all")
+    .attr('width', width)
+    .attr('height', height)
+    .on('mouseover', mouseover)
+    .on('mousemove', mousemove)
+    .on('mouseout', mouseout);
+
+
+  // What happens when the mouse move -> show the annotations at the right positions.
+  function mouseover() {
+    focus.style("opacity", 1)
+    focusText.style("opacity",1)
+  }
+
+  function mousemove() {
+    // recover coordinate we need
+    var x0 = yearScale.invert(d3.pointer(this)[0]);
+    var i = bisect(nameLineData, x0, 1);
+    selectedData = nameLineData[i]
+    console.log(selectedData)
+    focus
+      .attr("cx", yearScale(selectedData["Year of Birth"]))
+      .attr("cy", countScale(selectedData.Count))
+    focusText
+      .html("Year:" + selectedData["Year of Birth"] + "  ,  " + "Count:" + selectedData.Count)
+      .attr("x", yearScale(selectedData["Year of Birth"])+15)
+      .attr("y", countScale(selectedData.Count))
+    }
+  function mouseout() {
+    focus.style("opacity", 0)
+    focusText.style("opacity", 0)
+  }
+
+
         //let nameScale = d3.scaleLinear().domain()
         //var linegen = d3.line()
         //                .x(function(d) {return rankScale(d.rank)})
         //                .y(function(d) {return rankScale(d.rank)})
 
 
-      }
+      
+
+
+
+
+
+
+console.log(nameLineData)
+
+      }//end of PROMISE
+
+ 
 
     requestData()
   </script>
