@@ -259,13 +259,25 @@ const svg = d3.select("body")
                     .append("g")
                     .attr("transform",
                               "translate(" + margin.left + "," + margin.top + ")");
-const yearScale = d3.scaleLinear().domain([2012,2017]).range([0,width])
-let bottomAxis = d3.axisBottom(yearScale).ticks(6)
+const yearExtent = d3.extent(nameLineData,d=>d['Year of Birth'])
+const yearScale = d3.scaleLinear().domain(yearExtent).range([0,width])
+console.log(yearExtent)
+let bottomAxis = d3.axisBottom(yearScale).ticks(7)
 svg.append("g")
   .attr("transform", "translate(0," + height + ")")
   .call(bottomAxis);
-
-
+const countExtent = d3.extent(nameLineData,d=>d['Count'])
+const countScale = d3.scaleLinear().domain(countExtent).range([0,width])
+console.log(countExtent)
+var lineGen = d3.line()
+                .y(d=>countScale(d['Count']))
+                .x(d=>yearScale(d['Year of Birth']))
+svg.append("path")
+   .datum(nameLineData)
+   .attr("class","line")
+   .attr("fill","none")
+   .attr("stroke","steelblue")
+   .attr("d",lineGen);
 
         //let nameScale = d3.scaleLinear().domain()
         //var linegen = d3.line()
@@ -274,7 +286,7 @@ svg.append("g")
 
 
       }
-    
+
     requestData()
   </script>
 
