@@ -1,8 +1,27 @@
-<html>
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
 <head>
   <script src="https://d3js.org/d3.v6.min.js"></script>
+  <script src="https://d3js.org/d3-collection.v1.min.js"></script>
+  <style>
+    .bar{
+      position: absolute;
+      right:10px
+    }
+    .select{
+      position: absolute;
+      top: 3px
+    }
+  </style>
 </head>
 <body>
+  <div class="bar">
+    <svg id="barChart" width="600" height="300">
+    </svg>
+    <div class="select">
+      <select id="selectButton"></select>
+    </div>
+  </div>
 	<svg id="bubbleGraph" height="600" width="800" style="background: #sff; " ></svg>
   <div id="linechart"></div>
   <script>
@@ -15,8 +34,19 @@
     const bubblePaddedHeight = bubbleHeight - 2*bubblePadding
     const bubblePaddedWidth = bubbleWidth - 2*bubblePadding
 
+    const barLayer = d3.select("#barChart").append("g");
+    const barLegend = d3.select("#barChart").append("g");
+    const barWidth = d3.select("#barChart").attr("width");
+    const barHeight = d3.select("#barChart").attr("height");
+    const barPadding = 30
+    const barChartHeight = barHeight - 2*barPadding
+    const barChartWidth = barWidth - 2*barPadding
+
     const requestData = async () => {
       const bbnames = await d3.csv("Popular_Baby_Names.csv", d3.autoType)
+      console.log(bbnames)
+      const natality = await d3.csv('Natality.csv');
+      console.log(natality)
 
       const nameLineData = bbnames.filter((d)=>{return (d['Year of Birth']>= 2011 && d['Year of Birth']<= 2017)
                                                     && d['Rank']===1
@@ -115,8 +145,125 @@
 
 
                //.attr("transform", d => `translate(${d.x},${d.y})`);
+      }
 
 
+//Bar chart
+const ethnicity = ["WHITE NON HISPANIC","HISPANIC","BLACK NON HISPANIC","ASIAN AND PACIFIC ISLANDER","OTHER/UNKNOWN"]
+
+const barColorScale = d3.scaleOrdinal()
+                     .domain(ethnicity)
+                     .range(["#FEF1E2","#E28E51","#50280D","#FDDEBB","#687980"]);
+//Ethnicity scale
+const ethnicityScale = d3.scaleBand().domain(ethnicity).range([barPadding, barChartWidth-50]).padding(0.08);
+let ethnicityAxis= d3.axisBottom(ethnicityScale);
+
+
+barLegend.attr("class", "x axis")
+       .attr('transform', `translate(${barPadding},${barChartHeight+29})`)
+       .call(ethnicityAxis)
+       .selectAll("text")
+       .attr("transform", "rotate(6)")
+       .style("text-anchor", "middle")
+       .style("font-size","9px");
+
+// let birthsExtent= d3.extent(birthsByEthnicity, d=>d.value)
+// let upperBound=d3.max(birthsByEthnicity, d=>d.value)
+// console.log(upperBound);
+let birthsScale = d3.scaleLinear().domain([0,42000]).range([barChartHeight,5])
+let birthsAxis = d3.axisLeft(birthsScale);
+barLegend.append("g")
+        .attr('class', 'y axis')
+        .attr('transform', `translate(${30},${-241})`)
+        .call(birthsAxis);
+
+//x label
+barLayer.append('text')
+         .attr('class', 'xlabel')
+         .attr('x', 550)
+         .attr('y', 280)
+         .attr("text-anchor","middle")
+         .attr("font-size","12px")
+         .text('Ethinicity');
+
+//Add options to the button
+var years = d3.map(natality, d=>d["Birth Year"]).keys()
+console.log(years)
+d3.select("#selectButton")
+  .selectAll('yearOptions').data(years)
+  .enter()
+  .append('option')
+  .text(d=>d)
+  .attr('value', d=>d)
+
+  //a function that updates the chart
+  function update(selectedGroup) {
+    yearlyData = natality.filter((d)=>{
+      return d["Birth Year"]===selectedGroup;
+    })
+
+    //Births scale
+    var birthsByEthnicity= d3.nest()
+                             .key(d => d["Ethnicity of Mother"])
+                             .rollup(d => d3.sum(d, g =>g["Births"]))
+                             .entries(yearlyData);
+    // console.log(birthsByEthnicity);
+
+    //Add Bars
+    barLayer.selectAll('rect.bar').data(birthsByEthnicity)
+            .join('rect')
+            .attr('class', 'bar')
+            .attr('fill', d=>barColorScale(d.key))
+            .attr('x', d => ethnicityScale(d.key))
+            .attr('y', d => birthsScale(d.value))
+            .attr('width', ethnicityScale.bandwidth()-50)
+            .attr('height', d => barChartHeight-birthsScale(d.value))
+            .attr('transform', `translate(${barPadding+25},${30})`);
+
+    barLayer.selectAll('text.barNum').data(birthsByEthnicity)
+            .join('text')
+            .attr('class', 'barNum')
+            .attr("text-anchor","middle")
+            .attr("font-size","13px")
+            .attr('x', d => ethnicityScale(d.key))
+            .attr('y', d => birthsScale(d.value))
+            .text(d =>d.value)
+            .attr('transform', `translate(${barPadding+40},${28})`);
+  }
+
+// When the button is changed, run the updateChart function
+d3.select("#selectButton").on("change", function(d) {
+  var selectedOption = d3.select(this).property("value")
+  update(selectedOption);
+});
+
+update("2013");
+
+//chart title
+barLayer.append("text")
+         .attr('class', 'title')
+         .attr('x', 300)
+         .attr('y', 17)
+         .attr("text-anchor","middle")
+         .attr("font-size","18px")
+         .text('Number of New Born Babies');
+
+//Line chart
+var margin = {top:10,right:30,bottom:30,left:60};
+var width = 460 - margin.left - margin.right;
+var height = 400 - margin.top - margin.bottom;
+const svg = d3.select("body")
+                    .append("svg")
+                    .attr("width", width + margin.left + margin.right)
+                    .attr("height", height + margin.top + margin.bottom)
+                    .append("g")
+                    .attr("transform",
+                              "translate(" + margin.left + "," + margin.top + ")");
+const yearScale = d3.scaleLinear().domain([2012,2017]).range([0,width])
+let bottomAxis = d3.axisBottom(yearScale).ticks(6)
+svg.append("g")
+  .attr("transform", "translate(0," + height + ")")
+  .call(bottomAxis);
 
 
 
@@ -127,23 +274,7 @@
 
 
       }
-      var margin = {top:10,right:30,bottom:30,left:60};
-      var width = 460 - margin.left - margin.right;
-      var height = 400 - margin.top - margin.bottom;
-      const svg = d3.select("#linechart")
-                          .append("svg")
-                          .attr("width", width + margin.left + margin.right)
-                          .attr("height", height + margin.top + margin.bottom)
-                          .append("g")
-                          .attr("transform",
-                                    "translate(" + margin.left + "," + margin.top + ")");
-      let yearScale = d3.scaleLinear().domain([2011,2017]).range([0,width])
-      let bottomAxis = d3.axisBottom(yearScale).ticks(7)
-      svg.append("g")
-        .attr("class","x axis")
-        .attr("transform", "translate(0," + height + ")")
-        .call(bottomAxis);
-    }
+    
     requestData()
   </script>
 
