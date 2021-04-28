@@ -106,19 +106,21 @@
                     //if (d["Ethnicity"] === "HISPANIC"){return bubblePaddedWidth*0.5}
                     // if (d["Ethnicity"] === "BLACK NON HISPANIC"){return bubblePaddedWidth*0.75}
                     // if (d["Ethnicity"] === "ASIAN AND PACIFIC ISLANDER"){return bubblePaddedWidth}
-                    else {return 0}}).strength( 0.8 ) )
+                    else {return 0}}).strength( 0.9 ) )
                   .force("collision", d3.forceCollide()
                                         .radius(28)
                                         .iterations(2) )
                   .on("tick", render);
+     
 
         console.log(nameBubbleData)
 
       }
-      rankUpdate("3");
+      rankUpdate(10);
       d3.select("#selectRank").on("change", function(d) {
         var rank =  d3.select(this).property("value")
         rankUpdate(rank);
+        console.log(rank)
       });
       console.log(nameBubbleData)
 
