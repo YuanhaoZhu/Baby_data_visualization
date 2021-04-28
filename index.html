@@ -17,6 +17,8 @@
       position: absolute;
       top: 3px
     }
+
+
   </style>
 </head>
 <body>
@@ -26,6 +28,10 @@
     <div class="select">
       <select id="selectButton"></select>
     </div>
+  </div>
+  <div class="slidecontainer">
+    <text> Max Rank</text>
+   <input type="range" min="1" max="10" class="slider" id="myRange">
   </div>
 	<svg id="bubbleGraph" height="350" width="800" style="background: #sff; " ></svg>
   <svg id="lineGraph" height="600" width="800" style="background: #sff; " ></svg>
@@ -59,12 +65,19 @@
                                                     && d["Ethnicity"]==="WHITE NON HISPANIC"
                                                     && d['Gender']==="FEMALE"
                                                   });
-      console.log(nameLineData)
+
+      //var v =  document.getElementById("myRange").value
+
 
 
       nameBubbleData = bbnames.filter((d)=>{return d["Rank"] <= 5 && d["Year of Birth"] === 2015;});
-
-      console.log(nameBubbleData)
+      function updated(rank) {
+        nameBubbleData = bbnames.filter((d)=>{return d["Rank"] <= rank && d["Year of Birth"] === 2015;});
+      }
+      d3.select("#myRange").on("change", function(d) {
+        var rank =  d3.select(this).property("value")
+        updated(rank);
+      });
 
       const rankExtent = d3.extent(nameBubbleData, d => d['Rank']);
       const rankScale = d3.scaleLinear().domain(rankExtent).range([bubblePadding, bubblePaddedHeight]);
@@ -95,7 +108,7 @@
                     if (d["Ethnicity"] === "BLACK NON HISPANIC"&&d.Gender ==="MALE"){return bubblePaddedWidth*0.72}
                     if (d["Ethnicity"] === "BLACK NON HISPANIC"&&d.Gender ==="FEMALE"){return bubblePaddedWidth*0.78}
                     if (d["Ethnicity"] === "ASIAN AND PACIFIC ISLANDER"&&d.Gender ==="MALE"){return bubblePaddedWidth*0.94}
-                    if (d["Ethnicity"] === "ASIAN AND PACIFIC ISLANDER"&&d.Gender ==="FEMALE"){return bubblePaddedWidth} 
+                    if (d["Ethnicity"] === "ASIAN AND PACIFIC ISLANDER"&&d.Gender ==="FEMALE"){return bubblePaddedWidth}
                     //if (d["Ethnicity"] === "WHITE NON HISPANIC"){return bubblePaddedWidth*0.25}
                     //if (d["Ethnicity"] === "HISPANIC"){return bubblePaddedWidth*0.5}
                     // if (d["Ethnicity"] === "BLACK NON HISPANIC"){return bubblePaddedWidth*0.75}
@@ -401,7 +414,7 @@ svg.append("path")
         //                .y(function(d) {return rankScale(d.rank)})
 
 
-      
+
 
 
 
@@ -412,7 +425,7 @@ console.log(nameLineData)
 
       }//end of PROMISE
 
- 
+
 
     requestData()
   </script>
