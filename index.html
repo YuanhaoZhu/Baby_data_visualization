@@ -55,10 +55,14 @@
       console.log(natality)
 
       const nameLineData = bbnames.filter((d)=>{return (d['Year of Birth']>= 2011 && d['Year of Birth']<= 2017)
-                                                    && d['Rank']===1
-                                                    && d["Ethnicity"]==="WHITE NON HISPANIC"
+                                                    //&& d['Rank']===1
+                                                    && d["Child's First name"]==="EMMA"
+                                                    //&& d["Ethnicity"]==="WHITE NON HISPANIC"
                                                     && d['Gender']==="FEMALE"
                                                   });
+      //sort
+      nameLineData.sort((a,b) => d3.ascending(a['Year of Birth'], b['Year of Birth']));
+      // console.log(countDataList);
       console.log(nameLineData)
 
 
@@ -209,7 +213,9 @@ barLayer.append('text')
 
 //Add options to the button
 var years = d3.map(natality, d=>d["Birth Year"]).keys()
+years.sort()
 console.log(years)
+
 d3.select("#selectButton")
   .selectAll('yearOptions').data(years)
   .enter()
@@ -282,14 +288,14 @@ const svg = d3.select("body")
                     .attr("transform",
                               "translate(" + margin.left + "," + margin.top + ")");
 const yearExtent = d3.extent(nameLineData,d=>d['Year of Birth'])
-const yearScale = d3.scaleLinear().domain(yearExtent).range([0,width])
-console.log(yearExtent)
+const yearScale = d3.scaleLinear().domain([2011, 2017]).range([0,width])
 let bottomAxis = d3.axisBottom(yearScale).ticks(7)
 svg.append("g")
   .attr("transform", "translate(0," + height + ")")
   .call(bottomAxis);
 const countExtent = d3.extent(nameLineData,d=>d['Count'])
-const countScale = d3.scaleLinear().domain(countExtent).range([0,height])
+const maxCount = d3.max(bbnames, (d) => { return Math.max(d[1]); });
+const countScale = d3.scaleLinear().domain([0,500]).range([0,height])
 console.log(countExtent)
 var lineGen = d3.line()
                 .x(function(d) {return yearScale(d['Year of Birth'])})
@@ -297,21 +303,57 @@ var lineGen = d3.line()
 
                 .curve(d3.curveMonotoneX);
 
+
+// Add the lines
+
+svg.selectAll("myLines")
+  .data(nameLineData)
+  .enter()
+  .append("path")
+    .attr("d", lineGen )
+    .attr("stroke", d=> colorScale(d.Ethnicity))
+    .style("stroke-width", 4)
+    .style("fill", "none")
+
+
 svg.append("path")
    .datum(nameLineData)
    .attr("class","line")
    .attr("fill","none")
    .attr("stroke","steelblue")
    .attr("d",lineGen);
-     svg.append("g")
-     .selectAll("dot")
-     .data(nameLineData)
-     .enter()
-     .append("circle")
-       .attr("cx", function(d) {return yearScale(d['Year of Birth'])})
-       .attr("cy", function(d){return countScale(d['Count'])})
-       .attr("r", 5)
-       .attr("fill", "#69b3a2")
+
+// svg.append("g")
+//      .selectAll("dot")
+//      .data(nameLineData)
+//      .enter()
+//      .append("circle")
+//        .attr("cx", function(d) {return yearScale(d['Year of Birth'])})
+//        .attr("cy", function(d){return countScale(d['Count'])})
+//        .attr("r", 5)
+//        .attr("fill", "#69b3a2")
+
+// Add the points
+    svg
+      // First we need to enter in a group
+      .selectAll("myDots")
+      .data(nameLineData)
+      .enter()
+        .append('g')
+        .style("fill", d=> colorScale(d.Ethnicity))
+      // Second we need to enter in the 'values' part of this group
+      .selectAll("myPoints")
+      .data(nameLineData)
+      .enter()
+      .append("circle")
+        .attr("cx", d=> yearScale(d['Year of Birth']))
+        .attr("cy", d=> countScale(d['Count']) )
+        .attr("r", 5)
+        .attr("stroke", "white")
+
+
+
+
 
 // Create a rect on top of the svg area: this rectangle recovers mouse position
   svg
@@ -326,7 +368,7 @@ svg.append("path")
 
 
     // This allows to find the closest X index of the mouse:
-  var bisect = d3.bisector(function(d) { return d.x; }).left;
+  var bisect = d3.bisector(d=> d['Year of Birth']).left;
 
   // Create the circle that travels along the curve of chart
   var focus = svg
@@ -346,16 +388,26 @@ svg.append("path")
       .attr("alignment-baseline", "middle")
 
   // Add the line
-  svg
-    .append("path")
-    .datum(nameLineData)
-    .attr("fill", "none")
-    .attr("stroke", "steelblue")
-    .attr("stroke-width", 1.5)
-    .attr("d", d3.line()
-      .x(function(d) { return yearScale(d["Year of Birth"]) })
-      .y(function(d) { return countScale(d.Count) })
-      )
+  // svg
+  //   .append("path")
+  //   .datum(nameLineData)
+  //   .attr("fill", "none")
+  //   .attr("stroke", "steelblue")
+  //   .attr("stroke-width", 1.5)
+  //   .attr("d", d3.line()
+  //     .x(function(d) { return yearScale(d["Year of Birth"]) })
+  //     .y(function(d) { return countScale(d.Count) })
+  //     )
+
+    svg.append("g")
+    .selectAll("dot")
+    .data(nameLineData)
+    .enter()
+    .append("circle")
+    .attr("cx", function(d) {return yearScale(d['Year of Birth'])})
+    .attr("cy", function(d){return countScale(d['Count'])})
+    .attr("r", 5)
+    .attr("fill", "#69b3a2")
 
   // Create a rect on top of the svg area: this rectangle recovers mouse position
   svg
@@ -379,6 +431,7 @@ svg.append("path")
     // recover coordinate we need
     var x0 = yearScale.invert(d3.pointer(this)[0]);
     var i = bisect(nameLineData, x0, 1);
+
     selectedData = nameLineData[i]
     console.log(selectedData)
     focus
