@@ -86,6 +86,34 @@
 
       function rankUpdate(rank) {
         nameBubbleData = bbnames.filter((d)=>{return d["Rank"] <= rank && d["Year of Birth"] === 2015;});
+        rankExtent = d3.extent(nameBubbleData, d => d['Rank']);
+        rankScale = d3.scaleLinear().domain(rankExtent).range([bubblePadding, bubblePaddedHeight]);
+
+        
+        sim = d3.forceSimulation()
+                  .nodes(nameBubbleData)
+                  .force("ypos", d3.forceY().y(d => rankScale(d.Rank)).strength( 0.8 ) )//y-positioning force, set less than 1.0
+                  .force("xpos", d3.forceX().x( d=> {
+                    if (d["Ethnicity"] === "WHITE NON HISPANIC"&&d.Gender ==="MALE"){return bubblePaddedWidth*0.22}
+                    if (d["Ethnicity"] === "WHITE NON HISPANIC"&&d.Gender ==="FEMALE"){return bubblePaddedWidth*0.28}
+                    if (d["Ethnicity"] === "HISPANIC"&&d.Gender ==="MALE"){return bubblePaddedWidth*0.47}
+                    if (d["Ethnicity"] === "HISPANIC"&&d.Gender ==="FEMALE"){return bubblePaddedWidth*0.53}
+                    if (d["Ethnicity"] === "BLACK NON HISPANIC"&&d.Gender ==="MALE"){return bubblePaddedWidth*0.72}
+                    if (d["Ethnicity"] === "BLACK NON HISPANIC"&&d.Gender ==="FEMALE"){return bubblePaddedWidth*0.78}
+                    if (d["Ethnicity"] === "ASIAN AND PACIFIC ISLANDER"&&d.Gender ==="MALE"){return bubblePaddedWidth*0.94}
+                    if (d["Ethnicity"] === "ASIAN AND PACIFIC ISLANDER"&&d.Gender ==="FEMALE"){return bubblePaddedWidth}
+                    //if (d["Ethnicity"] === "WHITE NON HISPANIC"){return bubblePaddedWidth*0.25}
+                    //if (d["Ethnicity"] === "HISPANIC"){return bubblePaddedWidth*0.5}
+                    // if (d["Ethnicity"] === "BLACK NON HISPANIC"){return bubblePaddedWidth*0.75}
+                    // if (d["Ethnicity"] === "ASIAN AND PACIFIC ISLANDER"){return bubblePaddedWidth}
+                    else {return 0}}).strength( 0.8 ) )
+                  .force("collision", d3.forceCollide()
+                                        .radius(28)
+                                        .iterations(2) )
+                  .on("tick", render);
+
+        console.log(nameBubbleData)
+
       }
       rankUpdate("3");
       d3.select("#selectRank").on("change", function(d) {
@@ -97,8 +125,8 @@
       const bubbleEthnicity=["WHITE NON HISPANIC","HISPANIC","BLACK NON HISPANIC","ASIAN AND PACIFIC ISLANDER"]
 
 
-      const rankExtent = d3.extent(nameBubbleData, d => d['Rank']);
-      const rankScale = d3.scaleLinear().domain(rankExtent).range([bubblePadding, bubblePaddedHeight]);
+      var rankExtent = d3.extent(nameBubbleData, d => d['Rank']);
+      var rankScale = d3.scaleLinear().domain(rankExtent).range([bubblePadding, bubblePaddedHeight]);
 
       const colorScale = d3.scaleOrdinal()
                            .domain(bubbleEthnicity)
@@ -148,6 +176,7 @@
       // Update the chart for a new tick of the simulation
       function render() {
 
+
         // Edges
         // let lines = bubbleLayer.selectAll("line.link").data(nameBubbleData)
         //      .join(
@@ -188,7 +217,8 @@
                                 //                 .on("drag",dragging)
                                 //                 .on("end",dragend) )
                 )
-               .attr("transform", d => `translate(${d.x},${d.y})`);
+               //.attr("transform", d => `translate(${d.x},${d.y})`);
+               .attr("cx", d => d.x).attr("cy", d => d.y);
 
             // let texts = bubbleLayer.selectAll(null)
             //        .data(nameBubbleData)
