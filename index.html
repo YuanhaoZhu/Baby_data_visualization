@@ -30,8 +30,8 @@
     </div>
   </div>
   <div class="slidecontainer">
-    <text> Max Rank</text>
-   <input type="range" min="1" max="10" class="slider" id="myRange">
+    <text>Max Rank</text>
+   <select id="selectRank"></select>
   </div>
 	<svg id="bubbleGraph" height="350" width="800" style="background: #sff; " ></svg>
   <svg id="lineGraph" height="600" width="800" style="background: #sff; " ></svg>
@@ -74,38 +74,56 @@
 
 
       //var v =  document.getElementById("myRange").value
+      //Add options to selectRank
+      var ranks=[1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+      d3.select("#selectRank")
+        .selectAll('rankOptions').data(ranks)
+        .enter()
+        .append('option')
+        .text(d=>d)
+        .attr('value', d=>d)
 
 
-
-      nameBubbleData = bbnames.filter((d)=>{return d["Rank"] <= 5 && d["Year of Birth"] === 2015;});
-      function updated(rank) {
+      function rankUpdate(rank) {
         nameBubbleData = bbnames.filter((d)=>{return d["Rank"] <= rank && d["Year of Birth"] === 2015;});
       }
-      d3.select("#myRange").on("change", function(d) {
+      rankUpdate("3");
+      d3.select("#selectRank").on("change", function(d) {
         var rank =  d3.select(this).property("value")
-        updated(rank);
+        rankUpdate(rank);
       });
+      console.log(nameBubbleData)
+
+      const bubbleEthnicity=["WHITE NON HISPANIC","HISPANIC","BLACK NON HISPANIC","ASIAN AND PACIFIC ISLANDER"]
+
 
       const rankExtent = d3.extent(nameBubbleData, d => d['Rank']);
       const rankScale = d3.scaleLinear().domain(rankExtent).range([bubblePadding, bubblePaddedHeight]);
 
       const colorScale = d3.scaleOrdinal()
-                           .domain(["WHITE NON HISPANIC","HISPANIC","BLACK NON HISPANIC","ASIAN AND PACIFIC ISLANDER"])
+                           .domain(bubbleEthnicity)
                            .range(["#FEF1E2","#E28E51","#934914","#FDDEBB"]);
       const genderColorScale = d3.scaleOrdinal()
                            .domain(["FEMALE","MALE"])
                            .range(["pink","#99ccff"]);
 
 
+      //x axis
+      // const bubbleEthnicityScale=d3.scaleBand()
+      //                              .domain(bubbleEthnicity)
+      //                              .range([bubblePadding, bubblePaddedWidth])
+      //                              .padding(0.08);
+      // let bubbleXaxis = d3.axisBottom(bubbleEthnicityScale);
+      // bubbleLegend.attr('class', 'x axis b')
+      //             .attr('transform', `translate(${bubblePadding-10},${bubblePaddedHeight+50})`)
+      //             .call(bubbleXaxis);
 
-      // Construct a d3.forceSimulation model for your network diagram.
+
+
+
       // Construct a d3.forceSimulation model for your network diagram.
       var sim = d3.forceSimulation()
                   .nodes(nameBubbleData)
-                  // .force("links", d3.forceLink()
-                  //                         .links(edges)
-                  //                         .id( d => d['icpsr'] ) )
-                  // .force("repulse", d3.forceManyBody().strength(-150) )
                   .force("ypos", d3.forceY().y(d => rankScale(d.Rank)).strength( 0.8 ) )//y-positioning force, set less than 1.0
                   .force("xpos", d3.forceX().x( d=> {
                     if (d["Ethnicity"] === "WHITE NON HISPANIC"&&d.Gender ==="MALE"){return bubblePaddedWidth*0.22}
@@ -122,8 +140,8 @@
                     // if (d["Ethnicity"] === "ASIAN AND PACIFIC ISLANDER"){return bubblePaddedWidth}
                     else {return 0}}).strength( 0.8 ) )
                   .force("collision", d3.forceCollide()
-                                                       .radius(28)
-                                                       .iterations(2) )
+                                        .radius(28)
+                                        .iterations(2) )
                   .on("tick", render);
 
 
@@ -196,7 +214,7 @@ const barColorScale = d3.scaleOrdinal()
                      .domain(ethnicity)
                      .range(["#FEF1E2","#E28E51","#934914","#FDDEBB","#687980"]);
 //Ethnicity scale
-const ethnicityScale = d3.scaleBand().domain(ethnicity).range([barPadding, barChartWidth-50]).padding(0.08);
+const ethnicityScale = d3.scaleBand().domain(ethnicity).range([barPadding+2, barChartWidth-50]).padding(0.08);
 let ethnicityAxis= d3.axisBottom(ethnicityScale);
 
 
@@ -215,7 +233,7 @@ let birthsScale = d3.scaleLinear().domain([0,42000]).range([barChartHeight,5])
 let birthsAxis = d3.axisLeft(birthsScale);
 barLegend.append("g")
         .attr('class', 'y axis')
-        .attr('transform', `translate(${30},${-241})`)
+        .attr('transform', `translate(${32},${-241})`)
         .call(birthsAxis);
 
 //x label
@@ -280,7 +298,7 @@ d3.select("#selectButton").on("change", function(d) {
   update(selectedOption);
 });
 
-update("2013");
+update("2011");
 
 //chart title
 barLayer.append("text")
