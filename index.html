@@ -73,11 +73,12 @@
       // console.log(countDataList);
       //console.log(nameLineData)
 
-      var sumstat = d3.nest() // nest function allows to group the calculation per level of a factor
+      var groupbyNames = d3.nest() // nest function allows to group the calculation per level of a factor
         .key(function(d) { return d["Child's First name"];})
         .entries(bbnames);
-        console.log(sumstat)
-
+        console.log(groupbyNames)
+      const groupbyNamess = groupbyNames.filter((d)=>d.key==='EMMA')
+      console.log(groupbyNamess)
       //var v =  document.getElementById("myRange").value
       //Add options to selectRank
       var ranks=[1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
