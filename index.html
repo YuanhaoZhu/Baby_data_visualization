@@ -7,21 +7,44 @@
     @import url('https://fonts.googleapis.com/css2?family=Pangolin&display=swap');
     html{
       font-family: 'Pangolin', cursive;
-      font-size: 15px
+      font-size: 15px;
     }
 
     text{
       font-family: 'Pangolin', cursive;
-      font-size: 15px
+      font-size: 15px;
+    }
+
+    .bubble{
+      /* display: inline-block; */
+      position: absolute
+      top: 10px;
+      left:30px;
+
     }
     .bar{
       position: absolute;
-      right:10px
+      right:10px;
     }
     .select{
-      position: absolute;
-      top: 3px
+      /* position: absolute;
+      top: 3px */
     }
+    .my-legend{
+      position: absolute;
+      top:65px;
+      left:430px;
+    }
+    .linechart{
+      position:absolute;
+      top:1000px;
+    }
+    .slidecontainer{
+      position:absolute;
+      top: 75px;
+
+    }
+
 
     span {
     display: block;
@@ -32,31 +55,30 @@
 
     .my-legend .legend-title {
     text-align: left;
-    margin-bottom: 5px;
+    margin-bottom: 8px;
     font-weight: bold;
     font-size: 90%;
     }
   .my-legend .legend-scale ul {
     margin: 0;
-    margin-bottom: 5px;
     padding: 0;
     float: left;
     list-style: none;
     }
   .my-legend .legend-scale ul li {
+    display: block;
+    float: left;
+    width: 50px;
+    margin-bottom: 6px;
+    text-align: center;
     font-size: 80%;
     list-style: none;
-    margin-left: 0;
-    line-height: 18px;
-    margin-bottom: 2px;
     }
   .my-legend ul.legend-labels li span {
     display: block;
     float: left;
-    height: 16px;
-    width: 30px;
-    margin-right: 5px;
-    margin-left: 0;
+    height: 15px;
+    width: 50px;
     }
   .my-legend .legend-source {
     font-size: 70%;
@@ -67,25 +89,15 @@
     color: #777;
     }
 
-
   </style>
 </head>
 <body>
-  <div class="bar">
-    <svg id="barChart" width="600" height="300">
-    </svg>
-    <div class="select">
-      <select id="selectButton"></select>
-    </div>
-  </div>
-  <div class="slidecontainer">
-    <text>Choose the top</text>
-   <select id="selectRank"><option value="none" selected disabled hidden>Select a Rank</option></select>
-   <text>popular baby names</text>
+  <div style="text-align:center;">
+    <h1>Baby Names and Births in NYC</h1>
   </div>
 
   <div class='my-legend'>
-  <div class='legend-title'>Ethnicity</div>
+  <div class='legend-title'></div>
   <div class='legend-scale'>
     <ul class='legend-labels'>
       <li><span style='background:#FEF1E2;'></span>White Non Hispanic</li>
@@ -95,13 +107,34 @@
       <li><span style='background:#687980;'></span>other</li>
     </ul>
   </div>
-
   </div>
 
-  
-	<svg id="bubbleGraph" height="350" width="800" style="background: #sff; " ></svg>
-  <svg id="lineGraph" height="600" width="800" style="background: #sff; " ></svg>
-  <div id="linechart"></div>
+
+  <div class="slidecontainer">
+    <text>Choose the top</text>
+   <select id="selectRank"><option value="none" selected disabled hidden>Select a Rank</option></select>
+   <text>popular baby names</text>
+  </div>
+
+
+
+  <div class="bubble">
+    	<svg id="bubbleGraph" height="350" width="800" style="background: #sff; " ></svg>
+  </div>
+
+  <div class="bar">
+    <div class="select">
+      <select id="selectButton"></select>
+    </div>
+    <svg id="barChart" width="600" height="300"></svg>
+  </div>
+
+  <div id="linechart">
+    <svg id="lineGraph" height="600" width="800" style="background: #sff; " ></svg>
+  </div>
+
+
+
   <script>
   	const bubbleLayer = d3.select("#bubbleGraph").append("g");
   	const bubbleLegend = d3.select("#bubbleGraph").append("g");
