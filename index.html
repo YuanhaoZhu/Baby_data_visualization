@@ -89,6 +89,7 @@
         nameBubbleData = bbnames.filter((d)=>{return d["Rank"] <= rank && d["Year of Birth"] === 2015;});
         rankExtent = d3.extent(nameBubbleData, d => d['Rank']);
         rankScale = d3.scaleLinear().domain(rankExtent).range([bubblePadding, bubblePaddedHeight]);
+        bubbleLayer.selectAll("*").remove();
 
 
 
@@ -120,6 +121,7 @@
                   .on("tick", render);
 
 
+
         console.log(nameBubbleData)
 
       }
@@ -129,6 +131,10 @@
         rankUpdate(rank);
         console.log(rank)
       });
+
+
+
+      var nameBubbleData = bbnames.filter((d)=>{return d["Rank"] <= 10 && d["Year of Birth"] === 2015;});
       console.log(nameBubbleData)
 
       const bubbleEthnicity=["WHITE NON HISPANIC","HISPANIC","BLACK NON HISPANIC","ASIAN AND PACIFIC ISLANDER"]
@@ -181,22 +187,12 @@
                                         .iterations(2) )
                   .on("tick", render);
 
+      //rankUpdate(10);
+
 
       // Update the chart for a new tick of the simulation
       function render() {
-
-
-        // Edges
-        // let lines = bubbleLayer.selectAll("line.link").data(nameBubbleData)
-        //      .join(
-        //        enter => enter.append("line")
-        //                      .attr("class","link")
-        //                      .attr("stroke","#333")
-        //      )
-        //      .attr("x1", d => d.x).attr("x2", 1)
-        //      .attr("y1", d => d.y).attr("y2", 1);
-
-
+        console.log(nameBubbleData)
         let labels = bubbleLegend.selectAll("text.label").data(nameBubbleData)
              .join(
                enter => enter.append("text")
@@ -217,8 +213,9 @@
                              //.attr("stroke","#333")
                              .text(d=> "#"+d["Rank"])
                              .attr("text-anchor", "middle")
-                             .attr("alignment-baseline", "hanging")
+                             .attr("alignment-baseline", "hanging"),
 
+          
 
              )
              .attr("x", d => d.x).attr("y", d => d.y)
