@@ -85,9 +85,11 @@
 
 
       function rankUpdate(rank) {
+        nameBubbleData = []
         nameBubbleData = bbnames.filter((d)=>{return d["Rank"] <= rank && d["Year of Birth"] === 2015;});
         rankExtent = d3.extent(nameBubbleData, d => d['Rank']);
         rankScale = d3.scaleLinear().domain(rankExtent).range([bubblePadding, bubblePaddedHeight]);
+
 
 
         sim=d3.forceSimulation()
@@ -95,7 +97,7 @@
 
         sim.restart();
 
-        
+        console.log(nameBubbleData)
         sim.nodes(nameBubbleData)
                   .force("ypos", d3.forceY().y(d => rankScale(d.Rank)).strength( 0.8 ) )//y-positioning force, set less than 1.0
                   .force("xpos", d3.forceX().x( d=> {
@@ -213,7 +215,7 @@
                enter => enter.append("text")
                              .attr("class","rankNum")
                              //.attr("stroke","#333")
-                             .text(function(d){return d["Rank"]})
+                             .text(d=> "#"+d["Rank"])
                              .attr("text-anchor", "middle")
                              .attr("alignment-baseline", "hanging")
 
