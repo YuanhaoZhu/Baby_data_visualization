@@ -89,9 +89,14 @@
         rankExtent = d3.extent(nameBubbleData, d => d['Rank']);
         rankScale = d3.scaleLinear().domain(rankExtent).range([bubblePadding, bubblePaddedHeight]);
 
+
+        sim=d3.forceSimulation()
+
+
+        sim.restart();
+
         
-        sim = d3.forceSimulation()
-                  .nodes(nameBubbleData)
+        sim.nodes(nameBubbleData)
                   .force("ypos", d3.forceY().y(d => rankScale(d.Rank)).strength( 0.8 ) )//y-positioning force, set less than 1.0
                   .force("xpos", d3.forceX().x( d=> {
                     if (d["Ethnicity"] === "WHITE NON HISPANIC"&&d.Gender ==="MALE"){return bubblePaddedWidth*0.22}
@@ -106,12 +111,12 @@
                     //if (d["Ethnicity"] === "HISPANIC"){return bubblePaddedWidth*0.5}
                     // if (d["Ethnicity"] === "BLACK NON HISPANIC"){return bubblePaddedWidth*0.75}
                     // if (d["Ethnicity"] === "ASIAN AND PACIFIC ISLANDER"){return bubblePaddedWidth}
-                    else {return 0}}).strength( 0.9 ) )
+                    else {return 0}}).strength( 0.8) )
                   .force("collision", d3.forceCollide()
                                         .radius(28)
                                         .iterations(2) )
                   .on("tick", render);
-     
+
 
         console.log(nameBubbleData)
 
@@ -197,7 +202,20 @@
                              //.attr("stroke","#333")
                              .text(function(d){return d["Child's First name"]})
                              .attr("text-anchor", "middle")
-                             .attr("alignment-baseline", "middle")
+                             .attr("alignment-baseline", "ideographic")
+
+
+             )
+             .attr("x", d => d.x).attr("y", d => d.y)
+
+        let rankNums = bubbleLegend.selectAll("text.rankNum").data(nameBubbleData)
+             .join(
+               enter => enter.append("text")
+                             .attr("class","rankNum")
+                             //.attr("stroke","#333")
+                             .text(function(d){return d["Rank"]})
+                             .attr("text-anchor", "middle")
+                             .attr("alignment-baseline", "hanging")
 
 
              )
