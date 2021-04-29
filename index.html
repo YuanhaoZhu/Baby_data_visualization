@@ -211,7 +211,7 @@
       //rankUpdate(10);
 
       d3.select("#selectRank").on("change", function(d) {
-        var rank =  d3.select(this).property("value")
+        rank =  d3.select(this).property("value")
         rankUpdate(rank);
         //console.log(rank)
       });
@@ -342,6 +342,8 @@ d3.select("#selectButton")
     yearlyData = natality.filter((d)=>{return d["Birth Year"]===selectedGroup;})
 
     chosenYear = Number(selectedGroup)
+
+    console.log(rank)
 
     rankUpdate(rank);
 
