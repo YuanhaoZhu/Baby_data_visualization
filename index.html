@@ -57,9 +57,9 @@
 
     const requestData = async () => {
       const bbnames = await d3.csv("Popular_Baby_Names.csv", d3.autoType)
-      console.log(bbnames)
+      //console.log(bbnames)
       const natality = await d3.csv('Natality.csv');
-      console.log(natality)
+      //console.log(natality)
 
       const nameLineData = bbnames.filter((d)=>{return (d['Year of Birth']>= 2011 && d['Year of Birth']<= 2017)
                                                     //&& d['Rank']===1
@@ -71,8 +71,12 @@
       //sort
       nameLineData.sort((a,b) => d3.ascending(a['Year of Birth'], b['Year of Birth']));
       // console.log(countDataList);
-      console.log(nameLineData)
+      //console.log(nameLineData)
 
+      var sumstat = d3.nest() // nest function allows to group the calculation per level of a factor
+        .key(function(d) { return d["Child's First name"];})
+        .entries(bbnames);
+        console.log(sumstat)
 
       //var v =  document.getElementById("myRange").value
       //Add options to selectRank
@@ -99,7 +103,7 @@
 
         sim.restart();
 
-        console.log(nameBubbleData)
+        //console.log(nameBubbleData)
         sim.nodes(nameBubbleData)
                   .force("ypos", d3.forceY().y(d => rankScale(d.Rank)).strength( 0.8 ) )//y-positioning force, set less than 1.0
                   .force("xpos", d3.forceX().x( d=> {
@@ -123,20 +127,20 @@
 
 
 
-        console.log(nameBubbleData)
+        //console.log(nameBubbleData)
 
       }
       rankUpdate(10);
       d3.select("#selectRank").on("change", function(d) {
         var rank =  d3.select(this).property("value")
         rankUpdate(rank);
-        console.log(rank)
+        //console.log(rank)
       });
 
 
 
       var nameBubbleData = bbnames.filter((d)=>{return d["Rank"] <= 10 && d["Year of Birth"] === 2015;});
-      console.log(nameBubbleData)
+      //console.log(nameBubbleData)
 
       const bubbleEthnicity=["WHITE NON HISPANIC","HISPANIC","BLACK NON HISPANIC","ASIAN AND PACIFIC ISLANDER"]
 
@@ -154,7 +158,7 @@
 
       // Update the chart for a new tick of the simulation
       function render() {
-        console.log(nameBubbleData)
+        //console.log(nameBubbleData)
         let labels = bubbleLegend.selectAll("text.label").data(nameBubbleData)
              .join(
                enter => enter.append("text")
@@ -177,7 +181,7 @@
                              .attr("text-anchor", "middle")
                              .attr("alignment-baseline", "hanging"),
 
-          
+
 
              )
              .attr("x", d => d.x).attr("y", d => d.y)
@@ -244,7 +248,7 @@ barLayer.append('text')
 //Add options to the button
 var years = d3.map(natality, d=>d["Birth Year"]).keys()
 years.sort()
-console.log(years)
+//console.log(years)
 
 d3.select("#selectButton")
   .selectAll('yearOptions').data(years)
@@ -326,7 +330,7 @@ svg.append("g")
 const countExtent = d3.extent(nameLineData,d=>d['Count'])
 const maxCount = d3.max(bbnames, (d) => { return Math.max(d[1]); });
 const countScale = d3.scaleLinear().domain([0,500]).range([0,height])
-console.log(countExtent)
+//console.log(countExtent)
 var lineGen = d3.line()
                 .x(function(d) {return yearScale(d['Year of Birth'])})
                 .y(function(d){return countScale(d['Count'])})
@@ -463,7 +467,7 @@ svg.append("path")
     var i = bisect(nameLineData, x0, 1);
 
     selectedData = nameLineData[i]
-    console.log(selectedData)
+    //console.log(selectedData)
     focus
       .attr("cx", yearScale(selectedData["Year of Birth"]))
       .attr("cy", countScale(selectedData.Count))
@@ -491,7 +495,7 @@ svg.append("path")
 
 
 
-console.log(nameLineData)
+//console.log(nameLineData)
 
       }//end of PROMISE
 
