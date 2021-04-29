@@ -31,7 +31,7 @@
   </div>
   <div class="slidecontainer">
     <text>Choose the top</text>
-   <select id="selectRank"></select>
+   <select id="selectRank"><option value="starter" selected>Starter </option></select>
    <text>popular baby names</text>
   </div>
 	<svg id="bubbleGraph" height="350" width="800" style="background: #sff; " ></svg>
@@ -73,6 +73,9 @@
       // console.log(countDataList);
       //console.log(nameLineData)
 
+      var chosenYear = 2017
+      var rank = 3
+
       var groupbyNames = d3.nest() // nest function allows to group the calculation per level of a factor
         .key(function(d) { return d["Child's First name"];})
         .entries(bbnames);
@@ -86,13 +89,20 @@
         .selectAll('rankOptions').data(ranks)
         .enter()
         .append('option')
+        //.property('selected', d=>d[2])
         .text(d=>d)
         .attr('value', d=>d)
 
 
+      
+
+
+
+
       function rankUpdate(rank) {
+        console.log(chosenYear)
         nameBubbleData = []
-        nameBubbleData = bbnames.filter((d)=>{return d["Rank"] <= rank && d["Year of Birth"] === 2015;});
+        nameBubbleData = bbnames.filter((d)=>{return d["Rank"] <= rank && d["Year of Birth"] === chosenYear;});
         rankExtent = d3.extent(nameBubbleData, d => d['Rank']);
         rankScale = d3.scaleLinear().domain(rankExtent).range([bubblePadding, bubblePaddedHeight]);
         bubbleLayer.selectAll("*").remove();
@@ -131,7 +141,9 @@
         //console.log(nameBubbleData)
 
       }
-      rankUpdate(10);
+
+      //rankUpdate(10);
+
       d3.select("#selectRank").on("change", function(d) {
         var rank =  d3.select(this).property("value")
         rankUpdate(rank);
@@ -140,8 +152,8 @@
 
 
 
-      var nameBubbleData = bbnames.filter((d)=>{return d["Rank"] <= 10 && d["Year of Birth"] === 2015;});
-      //console.log(nameBubbleData)
+      var nameBubbleData = bbnames.filter((d)=>{return d["Rank"] <= rank && d["Year of Birth"] === chosenYear;});
+      console.log(nameBubbleData)
 
       const bubbleEthnicity=["WHITE NON HISPANIC","HISPANIC","BLACK NON HISPANIC","ASIAN AND PACIFIC ISLANDER"]
 
@@ -258,11 +270,16 @@ d3.select("#selectButton")
   .text(d=>d)
   .attr('value', d=>d)
 
+
   //a function that updates the chart
   function update(selectedGroup) {
-    yearlyData = natality.filter((d)=>{
-      return d["Birth Year"]===selectedGroup;
-    })
+    yearlyData = natality.filter((d)=>{return d["Birth Year"]===selectedGroup;})
+
+    chosenYear = Number(selectedGroup)
+
+    rankUpdate(rank);
+
+    
 
     //Births scale
     var birthsByEthnicity= d3.nest()
@@ -293,7 +310,11 @@ d3.select("#selectButton")
             .attr('transform', `translate(${barPadding+40},${28})`);
   }
 
+
+  console.log(chosenYear)
+
 // When the button is changed, run the updateChart function
+//update year
 d3.select("#selectButton").on("change", function(d) {
   var selectedOption = d3.select(this).property("value")
   update(selectedOption);
