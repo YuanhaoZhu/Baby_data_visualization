@@ -14,6 +14,16 @@
       font-size: 14px;
     }
 
+    text.title{
+      font-family: 'Pangolin', cursive;
+      font-size: 20px;
+    }
+
+    text.bubbleTitle{
+      font-family: 'Pangolin', cursive;
+      font-size: 20px;
+    }
+
 
 
     .linechart{
@@ -142,6 +152,8 @@ justify-content: center;
     }
 
 
+
+
   </style>
 </head>
 <body>
@@ -203,7 +215,7 @@ justify-content: center;
 </div>
 
 <div class="linechart">
-  <div class="line" text-align="center"><svg id="lineGraph" width="460" height="400" style="background: #sff; " ></svg></div>
+  <div class="line" text-align="center"><svg id="lineGraph" width="600" height="400" style="background: #sff; " ></svg></div>
 </div>
 
   <script>
@@ -243,6 +255,10 @@ justify-content: center;
       var chosenName = "ISABELLA"
       var chosenEthnicity = "HISPANIC"
       var chosenGender = "FEMALE"
+
+      function capitalize(string) {
+          return string.replace(/\w\S*/g, function(txt){return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();});
+      }
 
       var bbnames = await d3.csv("Popular_Baby_Names.csv", d3.autoType)
 
@@ -614,6 +630,14 @@ d3.select("#selectButton")
           .attr("stroke", d=> genderColorScale(chosenGender))
           .attr("stroke-width", 2)
 
+      lineLayer.append("text")
+           .attr('class', 'title')
+           .attr('x', lineChartWidth/2 +linePadding/2)
+           .attr('y', 17)
+           .attr("text-anchor","middle")
+           .attr("font-size",20)
+           .text("Trend of \"" + capitalize(chosenName) + "\" among " + capitalize(chosenEthnicity) + " populations");
+
 
 
 
@@ -755,7 +779,9 @@ d3.select("#selectButton")
            .attr('y', 17)
            .attr("text-anchor","middle")
            .attr("font-size",20)
-           .text("Popularity Trend of \"" + chosenName + "\"");
+           .text("Trend of \"" + capitalize(chosenName) + "\" among " + capitalize(chosenEthnicity) + " populations");
+
+
 
     }
 
