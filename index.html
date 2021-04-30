@@ -569,52 +569,30 @@ d3.select("#selectButton")
                   .curve(d3.curveMonotoneX);
 
 
-  // Add the lines
+  lineGen = d3.line()
+                      .x(function(d) {return yearScale(d['Year of Birth'])})
+                      .y(function(d){return countScale(d['Count'])})
+                      .curve(d3.curveMonotoneX);
 
-  lineLayer.selectAll("myLines")
-    .data(nameLineData)
-    .enter()
-    .append("path")
-      .attr("d", lineGen )
-      .attr("stroke", d=> colorScale(d.Ethnicity))
-      .style("stroke-width", 4)
-      .style("fill", "none")
+      lineLayer.append("path")
+         .datum(nameLineData)
+         .attr("class","line")
+         .attr("fill","none")
+         .attr("stroke",d=> genderColorScale(chosenGender))
+         .attr("stroke-width", 4)
+         .attr("d",lineGen);
 
-
-  lineLayer.append("path")
-     .datum(nameLineData)
-     .attr("class","line")
-     .attr("fill","none")
-     .attr("stroke","steelblue")
-     .attr("d",lineGen);
-
-  // svg.append("g")
-  //      .selectAll("dot")
-  //      .data(nameLineData)
-  //      .enter()
-  //      .append("circle")
-  //        .attr("cx", function(d) {return yearScale(d['Year of Birth'])})
-  //        .attr("cy", function(d){return countScale(d['Count'])})
-  //        .attr("r", 5)
-  //        .attr("fill", "#69b3a2")
-
-  // Add the points
       lineLayer
-        .selectAll("myDots")
-        .data(nameLineData)
-        .enter()
-          .append('g')
-          .style("fill", d=> colorScale(d.Ethnicity))
-        // Second we need to enter in the 'values' part of this group
         .selectAll("myPoints")
         .data(nameLineData)
         .enter()
         .append("circle")
+          .attr("fill", d=> colorScale(d.Ethnicity))
           .attr("cx", d=> yearScale(d['Year of Birth']))
           .attr("cy", d=> countScale(d['Count']) )
-          .attr("r", 5)
-          .attr("stroke", "white")
-
+          .attr("r", 6)
+          .attr("stroke", d=> genderColorScale(chosenGender))
+          .attr("stroke-width", 2)
 
 
 
@@ -715,7 +693,6 @@ d3.select("#selectButton")
 
     function updateLineChart(){
       lineLayer.selectAll("*").remove();
-      lineLegend.selectAll("*").remove();
       //update data
       nameLineData = bbnames.filter((d)=>{return (d['Year of Birth']>= 2011 && d['Year of Birth']<= 2017)
                                                     && d["Child's First name"]=== chosenName
@@ -726,52 +703,31 @@ d3.select("#selectButton")
       //sort
       nameLineData.sort((a,b) => d3.ascending(a['Year of Birth'], b['Year of Birth']));
       
-      lineLegend.append("g")
-        .attr("transform", "translate(0," + lineChartHeight + ")")
-        .call(bottomAxis);
-      
-      
+            
       lineGen = d3.line()
                       .x(function(d) {return yearScale(d['Year of Birth'])})
                       .y(function(d){return countScale(d['Count'])})
                       .curve(d3.curveMonotoneX);
 
-
-
-      lineLayer.selectAll("myLines")
-        .data(nameLineData)
-        .enter()
-        .append("path")
-          .attr("d", lineGen )
-          .attr("stroke", d=> colorScale(d.Ethnicity))
-          .style("stroke-width", 4)
-          .style("fill", "none")
-
-
       lineLayer.append("path")
          .datum(nameLineData)
          .attr("class","line")
          .attr("fill","none")
-         .attr("stroke","steelblue")
+         .attr("stroke",d=> genderColorScale(chosenGender))
+         .attr("stroke-width", 4)
          .attr("d",lineGen);
 
-          lineLayer
-            .selectAll("myDots")
-            .data(nameLineData)
-            .enter()
-              .append('g')
-              .style("fill", d=> colorScale(d.Ethnicity))
-            // Second we need to enter in the 'values' part of this group
-            .selectAll("myPoints")
-            .data(nameLineData)
-            .enter()
-            .append("circle")
-              .attr("cx", d=> yearScale(d['Year of Birth']))
-              .attr("cy", d=> countScale(d['Count']) )
-              .attr("r", 5)
-              .attr("stroke", "white")
-
-
+      lineLayer
+        .selectAll("myPoints")
+        .data(nameLineData)
+        .enter()
+        .append("circle")
+          .attr("fill", d=> colorScale(d.Ethnicity))
+          .attr("cx", d=> yearScale(d['Year of Birth']))
+          .attr("cy", d=> countScale(d['Count']) )
+          .attr("r", 6)
+          .attr("stroke", d=> genderColorScale(chosenGender))
+          .attr("stroke-width", 2)
 
     }
 
