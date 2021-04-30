@@ -741,6 +741,14 @@ d3.select("#selectButton")
           .attr("stroke", d=> genderColorScale(chosenGender))
           .attr("stroke-width", 2)
 
+      lineLayer.append("text")
+           .attr('class', 'title')
+           .attr('x', lineChartWidth/2 +linePadding/2)
+           .attr('y', 17)
+           .attr("text-anchor","middle")
+           .attr("font-size",20)
+           .text("Popularity Trend of \"" + chosenName + "\"");
+
     }
 
 
