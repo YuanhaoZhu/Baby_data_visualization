@@ -131,6 +131,14 @@ justify-content: center;
     color: #777;
     }
 
+  .gridlines line {
+      stroke: #bbb;
+    }
+
+  .gridlines .domain {
+      stroke: none;
+    }
+
 
   </style>
 </head>
@@ -208,27 +216,48 @@ justify-content: center;
     const barChartHeight = barHeight - 2*barPadding
     const barChartWidth = barWidth - 2*barPadding
 
+    const lineLegend = d3.select("#lineGraph").append("g");
+    const lineLayer = d3.select("#lineGraph").append("g");
+    const lineWidth = d3.select("#lineGraph").attr("width");
+    const lineHeight = d3.select("#lineGraph").attr("height");
+    const linePadding = 50
+    const lineChartHeight = lineHeight - 2*linePadding
+    const lineChartWidth = lineWidth - 2*linePadding
+
+
+
+
+
     const requestData = async () => {
-      const bbnames = await d3.csv("Popular_Baby_Names.csv", d3.autoType)
+      //set default
+      var chosenYear = 2017
+      var rank = 3
+      var chosenName = "ISABELLA"
+      var chosenEthnicity = "HISPANIC"
+      var chosenGender = "FEMALE"
+
+      var bbnames = await d3.csv("Popular_Baby_Names.csv", d3.autoType)
+
+      bbnames.forEach( d => {
+        d["Child's First name"]= d["Child's First name"].toUpperCase()
+      });
       //console.log(bbnames)
       const natality = await d3.csv('Natality.csv');
       //console.log(natality)
 
-      const nameLineData = bbnames.filter((d)=>{return (d['Year of Birth']>= 2011 && d['Year of Birth']<= 2017)
-                                                    //&& d['Rank']===1
-                                                    && d["Child's First name"]==="EMMA"
-                                                    //&& d["Ethnicity"]==="WHITE NON HISPANIC"
-                                                    && d['Gender']==="FEMALE"
+      var nameLineData = bbnames.filter((d)=>{return (d['Year of Birth']>= 2011)
+                                                    && d["Child's First name"]=== chosenName
+                                                    && d["Ethnicity"]=== chosenEthnicity
+                                                    && d['Gender']=== chosenGender
                                                   });
+
 
       //sort
       nameLineData.sort((a,b) => d3.ascending(a['Year of Birth'], b['Year of Birth']));
       // console.log(countDataList);
       //console.log(nameLineData)
 
-      var chosenYear = 2017
-      var rank = 3
-      var chosenName = "EMMA"
+
 
       var groupbyNames = d3.nest() // nest function allows to group the calculation per level of a factor
         .key(function(d) { return d["Child's First name"];})
@@ -497,36 +526,62 @@ d3.select("#selectButton")
 
   ////////////////////////////////////////////////////////////////////////////////////////////////////////////
   //Line chart
-  var margin = {top:10,right:30,bottom:30,left:60};
-  var width = 460 - margin.left - margin.right;
-  var height = 400 - margin.top - margin.bottom;
-  const svg = d3.select("#lineGraph")
-                      .append("svg")
-                      .attr("width", width + margin.left + margin.right)
-                      .attr("height", height + margin.top + margin.bottom)
-                      .append("g")
-                      .attr("transform",
-                                "translate(" + margin.left + "," + margin.top + ")");
-  const yearExtent = d3.extent(nameLineData,d=>d['Year of Birth'])
-  const yearScale = d3.scaleLinear().domain([2011, 2017]).range([0,width])
+  console.log(nameLineData)
+  const yearScale = d3.scaleLinear().domain([2011, 2017]).range([linePadding,lineChartWidth])
+  const maxCount = d3.max(bbnames, (d) => { return Math.max(d["Count"]); });
+  console.log(maxCount)
+  const countScale = d3.scaleLinear().domain([0,450]).range([lineChartHeight,linePadding])
+
+
+
+
+  // Y axis
+  let lineYAxis = d3.axisLeft(countScale)
+  let lineGridlines = d3.axisLeft(countScale)
+                        .tickSize(-lineChartWidth +linePadding)
+                        .tickFormat("")
+  lineLegend.append("g")
+    .attr("class", "y axis")
+    .attr("transform","translate(" + linePadding + ",0)")
+    .call(lineYAxis)
+  lineLegend.append("g")
+    .attr("class", "y gridlines")
+    .attr("transform","translate(" + linePadding + ",0)")
+    .call(lineGridlines);
+
   let bottomAxis = d3.axisBottom(yearScale).ticks(7)
-  svg.append("g")
-    .attr("transform", "translate(0," + height + ")")
+  // X axis
+  lineLegend.append("g")
+    .attr("transform", "translate(0," + lineChartHeight + ")")
     .call(bottomAxis);
-  const countExtent = d3.extent(nameLineData,d=>d['Count'])
-  const maxCount = d3.max(bbnames, (d) => { return Math.max(d[1]); });
-  const countScale = d3.scaleLinear().domain([0,500]).range([0,height])
-  //console.log(countExtent)
+
+
+  //    // Y axis
+  // let lineYAxis = d3.axisLeft(countScale).ticks(7)
+  // let lineGridlines = d3.axisLeft(countScale)
+  //                       .tickSize(-lineChartWidth +linePadding)
+  //                       .tickFormat("")
+  // lineLegend.append("g")
+  //   .attr("class", "y axis")
+  //   //.attr("transform",`translate(${linePadding},${linePadding})`)
+  //   .call(lineYAxis)
+  // lineLegend.append("g")
+  //   .attr("class", "y gridlines")
+  //   .attr("transform","translate(" + linePadding + ",0)")
+  //   .call(lineGridlines);
+
+
+
+
   var lineGen = d3.line()
                   .x(function(d) {return yearScale(d['Year of Birth'])})
                   .y(function(d){return countScale(d['Count'])})
-
                   .curve(d3.curveMonotoneX);
 
 
   // Add the lines
 
-  svg.selectAll("myLines")
+  lineLayer.selectAll("myLines")
     .data(nameLineData)
     .enter()
     .append("path")
@@ -536,7 +591,7 @@ d3.select("#selectButton")
       .style("fill", "none")
 
 
-  svg.append("path")
+  lineLayer.append("path")
      .datum(nameLineData)
      .attr("class","line")
      .attr("fill","none")
@@ -554,8 +609,7 @@ d3.select("#selectButton")
   //        .attr("fill", "#69b3a2")
 
   // Add the points
-      svg
-        // First we need to enter in a group
+      lineLayer
         .selectAll("myDots")
         .data(nameLineData)
         .enter()
@@ -576,35 +630,35 @@ d3.select("#selectButton")
 
 
   // Create a rect on top of the svg area: this rectangle recovers mouse position
-    svg
-      .append('rect')
-      .style("fill", "none")
-      .style("pointer-events", "all")
-      .attr('width', width)
-      .attr('height', height)
-      .on('mouseover', mouseover)
-      .on('mousemove', mousemove)
-      .on('mouseout', mouseout);
+    // lineGraph
+    //   .append('rect')
+    //   .style("fill", "none")
+    //   .style("pointer-events", "all")
+    //   .attr('width', width)
+    //   .attr('height', height)
+    //   .on('mouseover', mouseover)
+    //   .on('mousemove', mousemove)
+    //   .on('mouseout', mouseout);
 
 
-    //   // This allows to find the closest X index of the mouse:
-     var bisect = d3.bisector(d=> d['Year of Birth']).left;
+    // //   // This allows to find the closest X index of the mouse:
+    //  var bisect = d3.bisector(d=> d['Year of Birth']).left;
 
-    // // Create the circle that travels along the curve of chart
-    var focus = svg.append('g')
-      .append('circle')
-        .style("fill", "none")
-        .attr("stroke", "black")
-        .attr('r', 8.5)
-        .style("opacity", 0)
+    // // // Create the circle that travels along the curve of chart
+    // var focus = svg.append('g')
+    //   .append('circle')
+    //     .style("fill", "none")
+    //     .attr("stroke", "black")
+    //     .attr('r', 8.5)
+    //     .style("opacity", 0)
 
-    // // Create the text that travels along the curve of chart
-    var focusText = svg
-      .append('g')
-      .append('text')
-        .style("opacity", 0)
-        .attr("text-anchor", "left")
-        .attr("alignment-baseline", "middle")
+    // // // Create the text that travels along the curve of chart
+    // var focusText = svg
+    //   .append('g')
+    //   .append('text')
+    //     .style("opacity", 0)
+    //     .attr("text-anchor", "left")
+    //     .attr("alignment-baseline", "middle")
 
 
 
@@ -631,47 +685,107 @@ d3.select("#selectButton")
 
 
     //What happens when the mouse move -> show the annotations at the right positions.
-    function mouseover() {
-      focus.style("opacity", 1)
-      focusText.style("opacity",1)
-    }
+    // function mouseover() {
+    //   focus.style("opacity", 1)
+    //   focusText.style("opacity",1)
+    // }
 
-    function mousemove() {
-      // recover coordinate we need
-      var x0 = yearScale.invert(d3.pointer(this)[0]);
-      var i = bisect(nameLineData, x0, 1);
+    // function mousemove() {
+    //   // recover coordinate we need
+    //   var x0 = yearScale.invert(d3.pointer(this)[0]);
+    //   var i = bisect(nameLineData, x0, 1);
 
-      selectedData = nameLineData[i]
-      //console.log(selectedData)
-      focus.attr("cx", yearScale(selectedData["Year of Birth"]))
-        .attr("cy", countScale(selectedData.Count))
-      focusText.html("Year:" + selectedData["Year of Birth"] + "  ,  " + "Count:" + selectedData.Count)
-        .attr("x", yearScale(selectedData["Year of Birth"])+15)
-        .attr("y", countScale(selectedData.Count))
-      }
-    function mouseout() {
-      focus.style("opacity", 0)
-      focusText.style("opacity", 0)
-    }
+    //   selectedData = nameLineData[i]
+    //   //console.log(selectedData)
+    //   focus.attr("cx", yearScale(selectedData["Year of Birth"]))
+    //     .attr("cy", countScale(selectedData.Count))
+    //   focusText.html("Year:" + selectedData["Year of Birth"] + "  ,  " + "Count:" + selectedData.Count)
+    //     .attr("x", yearScale(selectedData["Year of Birth"])+15)
+    //     .attr("y", countScale(selectedData.Count))
+    //   }
+    // function mouseout() {
+    //   focus.style("opacity", 0)
+    //   focusText.style("opacity", 0)
+    // }
 
     function clickBubble(event, d){
       //console.log(d['Year of Birth'] + d.Ethnicity )
       console.log(d)
+      chosenName = d["Child's First name"]
+      chosenEthnicity = d["Ethnicity"]
+      chosenGender = d["Gender"]
       //hightlight bubble
       d3.select(this).transition()
         .attr("r", 36)
       .transition()
       .attr("r", 26)
 
+      updateLineChart()
+    }
+
+    function updateLineChart(){
+      lineLayer.selectAll("*").remove();
+      lineLegend.selectAll("*").remove();
+      //update data
+      nameLineData = bbnames.filter((d)=>{return (d['Year of Birth']>= 2011 && d['Year of Birth']<= 2017)
+                                                    && d["Child's First name"]=== chosenName
+                                                    && d["Ethnicity"]=== chosenEthnicity
+                                                    && d['Gender']=== chosenGender
+                                                  });
+
+      //sort
+      nameLineData.sort((a,b) => d3.ascending(a['Year of Birth'], b['Year of Birth']));
+
+      lineLegend.append("g")
+        .attr("transform", "translate(0," + lineChartHeight + ")")
+        .call(bottomAxis);
+
+
+      lineGen = d3.line()
+                      .x(function(d) {return yearScale(d['Year of Birth'])})
+                      .y(function(d){return countScale(d['Count'])})
+                      .curve(d3.curveMonotoneX);
+
+
+
+      lineLayer.selectAll("myLines")
+        .data(nameLineData)
+        .enter()
+        .append("path")
+          .attr("d", lineGen )
+          .attr("stroke", d=> colorScale(d.Ethnicity))
+          .style("stroke-width", 4)
+          .style("fill", "none")
+
+
+      lineLayer.append("path")
+         .datum(nameLineData)
+         .attr("class","line")
+         .attr("fill","none")
+         .attr("stroke","steelblue")
+         .attr("d",lineGen);
+
+          lineLayer
+            .selectAll("myDots")
+            .data(nameLineData)
+            .enter()
+              .append('g')
+              .style("fill", d=> colorScale(d.Ethnicity))
+            // Second we need to enter in the 'values' part of this group
+            .selectAll("myPoints")
+            .data(nameLineData)
+            .enter()
+            .append("circle")
+              .attr("cx", d=> yearScale(d['Year of Birth']))
+              .attr("cy", d=> countScale(d['Count']) )
+              .attr("r", 5)
+              .attr("stroke", "white")
+
 
 
     }
 
 
-          //let nameScale = d3.scaleLinear().domain()
-          //var linegen = d3.line()
-          //                .x(function(d) {return rankScale(d.rank)})
-          //                .y(function(d) {return rankScale(d.rank)})
 
 
 
