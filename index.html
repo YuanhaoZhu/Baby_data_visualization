@@ -32,21 +32,20 @@
       justify-content: center;
       right:10px;
     }
-    .select{
-      /* position: absolute;
-      top: 3px */
-    }
+
     .my-legend{
       display: flex;
-justify-content: center;
+      justify-content: center;
       top:65px;
       left:430px;
     }
     .slidecontainer{
       display: flex;
-justify-content: center;
-margin-top: 20px;
-margin-bottom: 30px;
+      justify-content: space-evenly;
+      margin-top: 20px;
+      margin-bottom: 30px;
+      margin-right:180px;
+      margin-left: 140px;
 
     }
     .my-legendA{
@@ -165,21 +164,26 @@ justify-content: center;
   </div>
 
   <div class="slidecontainer">
-    <text>Choose the top</text>
-   <select id="selectRank"><option value="none" selected disabled hidden>Select a Rank</option></select>
-   <text>popular baby names</text>
+    <div class="rankSlector">
+      <text>Choose a rank</text>
+     <select id="selectRank"><option value="none" selected disabled hidden>Select</option></select>
+    </div>
+   <div class="select">
+     <text>Choose a year</text>
+       <select id="selectButton"></select>
+   </div>
+
   </div>
+
 
 
 <div class="barandBubble">
   <div class="bubble" text-align="center"><svg id="bubbleGraph" height="350" width="800" style="background: #sff; " ></svg></div>
 
   <div class="bar">
-    <div class="select">
-      <select id="selectButton"></select>
-    </div>
     <svg id="barChart" width="600" height="300"></svg>
   </div>
+
 </div>
 
 <div class="linechart">
@@ -242,9 +246,6 @@ justify-content: center;
         //.property('selected', d=>d[2])
         .text(d=>d)
         .attr('value', d=>d)
-
-
-
 
 
 
@@ -318,6 +319,15 @@ justify-content: center;
       const genderColorScale = d3.scaleOrdinal()
                            .domain(["FEMALE","MALE"])
                            .range(["pink","#99ccff"]);
+
+
+     bubbleLayer.append("text")
+                .attr('class', 'title')
+                .attr('x', 300)
+                .attr('y', 100)
+                .attr("text-anchor","middle")
+                .attr("font-size","18px")
+                .text('Popular Baby names');
 
 
       // Update the chart for a new tick of the simulation
@@ -483,7 +493,7 @@ d3.select("#selectButton")
            .attr('y', 17)
            .attr("text-anchor","middle")
            .attr("font-size","18px")
-           .text('Number of New Born Babies');
+           .text('Number of Newborn Babies');
 
   ////////////////////////////////////////////////////////////////////////////////////////////////////////////
   //Line chart
@@ -653,7 +663,7 @@ d3.select("#selectButton")
       .transition()
       .attr("r", 26)
 
-        
+
 
     }
 
