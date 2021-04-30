@@ -14,16 +14,22 @@
       font-family: 'Pangolin', cursive;
       font-size: 15px;
     }
-
+    .linechart{
+      display: flex;
+      justify-content: center;
+      right:10px;
+    }
     .bubble{
       /* display: inline-block; */
-      position: absolute
+      display: flex;
+      justify-content: center;
       top: 10px;
       left:30px;
 
     }
     .bar{
-      position: absolute;
+      display: flex;
+      justify-content: center;
       right:10px;
     }
     .select{
@@ -31,20 +37,28 @@
       top: 3px */
     }
     .my-legend{
-      position: absolute;
+      display: flex;
+justify-content: center;
       top:65px;
       left:430px;
     }
-    .linechart{
-      position:absolute;
-      top:1000px;
-    }
     .slidecontainer{
-      position:absolute;
-      top: 75px;
+      display: flex;
+justify-content: center;
+margin-top: 20px;
+margin-bottom: 30px;
 
     }
-
+    .my-legendA{
+      display: flex;
+justify-content: center;
+      top:65px;
+      left:430px;
+    }
+    .barandBubble{
+      display: flex;
+      justify-content: center;
+    }
 
     span {
     display: block;
@@ -80,14 +94,44 @@
     height: 15px;
     width: 50px;
     }
-  .my-legend .legend-source {
-    font-size: 70%;
-    color: #999;
-    clear: both;
-    }
+
   .my-legend a {
     color: #777;
     }
+
+
+    .my-legendA .legend-titleA {
+    text-align: left;
+    margin-bottom: 8px;
+    font-weight: bold;
+    font-size: 90%;
+    }
+  .my-legendA .legend-scaleA ul {
+    margin: 0;
+    padding: 0;
+    float: left;
+    list-style: none;
+    }
+  .my-legendA .legend-scaleA ul li {
+    display: block;
+    float: left;
+    width: 50px;
+    margin-bottom: 6px;
+    text-align: center;
+    font-size: 80%;
+    list-style: none;
+    }
+  .my-legendA ul.legend-labelA li span {
+    display: block;
+    float: left;
+    height: 15px;
+    width: 50px;
+    }
+
+  .my-legendA a {
+    color: #777;
+    }
+
 
   </style>
 </head>
@@ -96,7 +140,7 @@
     <h1>Baby Names and Births in NYC</h1>
   </div>
 
-  <div class='my-legend'>
+  <div class='my-legend' text-align="center">
   <div class='legend-title'></div>
   <div class='legend-scale'>
     <ul class='legend-labels'>
@@ -110,6 +154,16 @@
   </div>
 
 
+  <div class='my-legendA' text-align="center">
+  <div class='legend-titleA'></div>
+  <div class='legend-scaleA'>
+    <ul class='legend-labelA'>
+      <li><span style='background:#99ccff;'></span>Male</li>
+      <li><span style='background:#ffc0cb;'></span>Female</li>
+    </ul>
+  </div>
+  </div>
+
   <div class="slidecontainer">
     <text>Choose the top</text>
    <select id="selectRank"><option value="none" selected disabled hidden>Select a Rank</option></select>
@@ -117,10 +171,8 @@
   </div>
 
 
-
-  <div class="bubble">
-    	<svg id="bubbleGraph" height="350" width="800" style="background: #sff; " ></svg>
-  </div>
+<div class="barandBubble">
+  <div class="bubble" text-align="center"><svg id="bubbleGraph" height="350" width="800" style="background: #sff; " ></svg></div>
 
   <div class="bar">
     <div class="select">
@@ -128,12 +180,11 @@
     </div>
     <svg id="barChart" width="600" height="300"></svg>
   </div>
+</div>
 
-  <div id="linechart">
-    <svg id="lineGraph" height="600" width="800" style="background: #sff; " ></svg>
-  </div>
-
-
+<div class="linechart">
+  <div class="line" text-align="center"><svg id="lineGraph" width="460" height="400" style="background: #sff; " ></svg></div>
+</div>
 
   <script>
   	const bubbleLayer = d3.select("#bubbleGraph").append("g");
@@ -413,218 +464,207 @@ d3.select("#selectButton")
 
   console.log(chosenYear)
 
-// When the button is changed, run the updateChart function
-//update year
-d3.select("#selectButton").on("change", function(d) {
-  var selectedOption = d3.select(this).property("value")
-  update(selectedOption);
-});
+  // When the button is changed, run the updateChart function
+  //update year
+  d3.select("#selectButton").on("change", function(d) {
+    var selectedOption = d3.select(this).property("value")
+    update(selectedOption);
+  });
 
-update("2011");
+  update("2011");
 
-//chart title
-barLayer.append("text")
-         .attr('class', 'title')
-         .attr('x', 300)
-         .attr('y', 17)
-         .attr("text-anchor","middle")
-         .attr("font-size","18px")
-         .text('Number of New Born Babies');
+  //chart title
+  barLayer.append("text")
+           .attr('class', 'title')
+           .attr('x', 300)
+           .attr('y', 17)
+           .attr("text-anchor","middle")
+           .attr("font-size","18px")
+           .text('Number of New Born Babies');
 
-////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//Line chart
-var margin = {top:10,right:30,bottom:30,left:60};
-var width = 460 - margin.left - margin.right;
-var height = 400 - margin.top - margin.bottom;
-const svg = d3.select("body")
-                    .append("svg")
-                    .attr("width", width + margin.left + margin.right)
-                    .attr("height", height + margin.top + margin.bottom)
-                    .append("g")
-                    .attr("transform",
-                              "translate(" + margin.left + "," + margin.top + ")");
-const yearExtent = d3.extent(nameLineData,d=>d['Year of Birth'])
-const yearScale = d3.scaleLinear().domain([2011, 2017]).range([0,width])
-let bottomAxis = d3.axisBottom(yearScale).ticks(7)
-svg.append("g")
-  .attr("transform", "translate(0," + height + ")")
-  .call(bottomAxis);
-const countExtent = d3.extent(nameLineData,d=>d['Count'])
-const maxCount = d3.max(bbnames, (d) => { return Math.max(d[1]); });
-const countScale = d3.scaleLinear().domain([0,500]).range([0,height])
-//console.log(countExtent)
-var lineGen = d3.line()
-                .x(function(d) {return yearScale(d['Year of Birth'])})
-                .y(function(d){return countScale(d['Count'])})
+  ////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  //Line chart
+  var margin = {top:10,right:30,bottom:30,left:60};
+  var width = 460 - margin.left - margin.right;
+  var height = 400 - margin.top - margin.bottom;
+  const svg = d3.select("#lineGraph")
+                      .append("svg")
+                      .attr("width", width + margin.left + margin.right)
+                      .attr("height", height + margin.top + margin.bottom)
+                      .append("g")
+                      .attr("transform",
+                                "translate(" + margin.left + "," + margin.top + ")");
+  const yearExtent = d3.extent(nameLineData,d=>d['Year of Birth'])
+  const yearScale = d3.scaleLinear().domain([2011, 2017]).range([0,width])
+  let bottomAxis = d3.axisBottom(yearScale).ticks(7)
+  svg.append("g")
+    .attr("transform", "translate(0," + height + ")")
+    .call(bottomAxis);
+  const countExtent = d3.extent(nameLineData,d=>d['Count'])
+  const maxCount = d3.max(bbnames, (d) => { return Math.max(d[1]); });
+  const countScale = d3.scaleLinear().domain([0,500]).range([0,height])
+  //console.log(countExtent)
+  var lineGen = d3.line()
+                  .x(function(d) {return yearScale(d['Year of Birth'])})
+                  .y(function(d){return countScale(d['Count'])})
 
-                .curve(d3.curveMonotoneX);
-
-
-// Add the lines
-
-svg.selectAll("myLines")
-  .data(nameLineData)
-  .enter()
-  .append("path")
-    .attr("d", lineGen )
-    .attr("stroke", d=> colorScale(d.Ethnicity))
-    .style("stroke-width", 4)
-    .style("fill", "none")
+                  .curve(d3.curveMonotoneX);
 
 
-svg.append("path")
-   .datum(nameLineData)
-   .attr("class","line")
-   .attr("fill","none")
-   .attr("stroke","steelblue")
-   .attr("d",lineGen);
+  // Add the lines
 
-// svg.append("g")
-//      .selectAll("dot")
-//      .data(nameLineData)
-//      .enter()
-//      .append("circle")
-//        .attr("cx", function(d) {return yearScale(d['Year of Birth'])})
-//        .attr("cy", function(d){return countScale(d['Count'])})
-//        .attr("r", 5)
-//        .attr("fill", "#69b3a2")
+  svg.selectAll("myLines")
+    .data(nameLineData)
+    .enter()
+    .append("path")
+      .attr("d", lineGen )
+      .attr("stroke", d=> colorScale(d.Ethnicity))
+      .style("stroke-width", 4)
+      .style("fill", "none")
 
-// Add the points
+
+  svg.append("path")
+     .datum(nameLineData)
+     .attr("class","line")
+     .attr("fill","none")
+     .attr("stroke","steelblue")
+     .attr("d",lineGen);
+
+  // svg.append("g")
+  //      .selectAll("dot")
+  //      .data(nameLineData)
+  //      .enter()
+  //      .append("circle")
+  //        .attr("cx", function(d) {return yearScale(d['Year of Birth'])})
+  //        .attr("cy", function(d){return countScale(d['Count'])})
+  //        .attr("r", 5)
+  //        .attr("fill", "#69b3a2")
+
+  // Add the points
+      svg
+        // First we need to enter in a group
+        .selectAll("myDots")
+        .data(nameLineData)
+        .enter()
+          .append('g')
+          .style("fill", d=> colorScale(d.Ethnicity))
+        // Second we need to enter in the 'values' part of this group
+        .selectAll("myPoints")
+        .data(nameLineData)
+        .enter()
+        .append("circle")
+          .attr("cx", d=> yearScale(d['Year of Birth']))
+          .attr("cy", d=> countScale(d['Count']) )
+          .attr("r", 5)
+          .attr("stroke", "white")
+
+
+
+
+
+  // Create a rect on top of the svg area: this rectangle recovers mouse position
     svg
-      // First we need to enter in a group
-      .selectAll("myDots")
-      .data(nameLineData)
-      .enter()
-        .append('g')
-        .style("fill", d=> colorScale(d.Ethnicity))
-      // Second we need to enter in the 'values' part of this group
-      .selectAll("myPoints")
+      .append('rect')
+      .style("fill", "none")
+      .style("pointer-events", "all")
+      .attr('width', width)
+      .attr('height', height)
+      .on('mouseover', mouseover)
+      .on('mousemove', mousemove)
+      .on('mouseout', mouseout);
+
+
+      // This allows to find the closest X index of the mouse:
+    var bisect = d3.bisector(d=> d['Year of Birth']).left;
+
+    // Create the circle that travels along the curve of chart
+    var focus = svg.append('g')
+      .append('circle')
+        .style("fill", "none")
+        .attr("stroke", "black")
+        .attr('r', 8.5)
+        .style("opacity", 0)
+
+    // Create the text that travels along the curve of chart
+    var focusText = svg
+      .append('g')
+      .append('text')
+        .style("opacity", 0)
+        .attr("text-anchor", "left")
+        .attr("alignment-baseline", "middle")
+
+    // Add the line
+    // svg
+    //   .append("path")
+    //   .datum(nameLineData)
+    //   .attr("fill", "none")
+    //   .attr("stroke", "steelblue")
+    //   .attr("stroke-width", 1.5)
+    //   .attr("d", d3.line()
+    //     .x(function(d) { return yearScale(d["Year of Birth"]) })
+    //     .y(function(d) { return countScale(d.Count) })
+    //     )
+
+      svg.append("g")
+      .selectAll("dot")
       .data(nameLineData)
       .enter()
       .append("circle")
-        .attr("cx", d=> yearScale(d['Year of Birth']))
-        .attr("cy", d=> countScale(d['Count']) )
-        .attr("r", 5)
-        .attr("stroke", "white")
+      .attr("cx", function(d) {return yearScale(d['Year of Birth'])})
+      .attr("cy", function(d){return countScale(d['Count'])})
+      .attr("r", 5)
+      .attr("fill", "#69b3a2")
 
+    // Create a rect on top of the svg area: this rectangle recovers mouse position
 
-
-
-
-// Create a rect on top of the svg area: this rectangle recovers mouse position
-  svg
-    .append('rect')
-    .style("fill", "none")
-    .style("pointer-events", "all")
-    .attr('width', width)
-    .attr('height', height)
-    .on('mouseover', mouseover)
-    .on('mousemove', mousemove)
-    .on('mouseout', mouseout);
-
-
-    // This allows to find the closest X index of the mouse:
-  var bisect = d3.bisector(d=> d['Year of Birth']).left;
-
-  // Create the circle that travels along the curve of chart
-  var focus = svg
-    .append('g')
-    .append('circle')
+      svg.append('rect')
       .style("fill", "none")
-      .attr("stroke", "black")
-      .attr('r', 8.5)
-      .style("opacity", 0)
-
-  // Create the text that travels along the curve of chart
-  var focusText = svg
-    .append('g')
-    .append('text')
-      .style("opacity", 0)
-      .attr("text-anchor", "left")
-      .attr("alignment-baseline", "middle")
-
-  // Add the line
-  // svg
-  //   .append("path")
-  //   .datum(nameLineData)
-  //   .attr("fill", "none")
-  //   .attr("stroke", "steelblue")
-  //   .attr("stroke-width", 1.5)
-  //   .attr("d", d3.line()
-  //     .x(function(d) { return yearScale(d["Year of Birth"]) })
-  //     .y(function(d) { return countScale(d.Count) })
-  //     )
-
-    svg.append("g")
-    .selectAll("dot")
-    .data(nameLineData)
-    .enter()
-    .append("circle")
-    .attr("cx", function(d) {return yearScale(d['Year of Birth'])})
-    .attr("cy", function(d){return countScale(d['Count'])})
-    .attr("r", 5)
-    .attr("fill", "#69b3a2")
-
-  // Create a rect on top of the svg area: this rectangle recovers mouse position
-  svg
-    .append('rect')
-    .style("fill", "none")
-    .style("pointer-events", "all")
-    .attr('width', width)
-    .attr('height', height)
-    .on('mouseover', mouseover)
-    .on('mousemove', mousemove)
-    .on('mouseout', mouseout);
+      .style("pointer-events", "all")
+      .attr('width', width)
+      .attr('height', height)
+      .on('mouseover', mouseover)
+      .on('mousemove', mousemove)
+      .on('mouseout', mouseout);
 
 
-  // What happens when the mouse move -> show the annotations at the right positions.
-  function mouseover() {
-    focus.style("opacity", 1)
-    focusText.style("opacity",1)
-  }
-
-  function mousemove() {
-    // recover coordinate we need
-    var x0 = yearScale.invert(d3.pointer(this)[0]);
-    var i = bisect(nameLineData, x0, 1);
-
-    selectedData = nameLineData[i]
-    //console.log(selectedData)
-    focus
-      .attr("cx", yearScale(selectedData["Year of Birth"]))
-      .attr("cy", countScale(selectedData.Count))
-    focusText
-      .html("Year:" + selectedData["Year of Birth"] + "  ,  " + "Count:" + selectedData.Count)
-      .attr("x", yearScale(selectedData["Year of Birth"])+15)
-      .attr("y", countScale(selectedData.Count))
+    // What happens when the mouse move -> show the annotations at the right positions.
+    function mouseover() {
+      focus.style("opacity", 1)
+      focusText.style("opacity",1)
     }
-  function mouseout() {
-    focus.style("opacity", 0)
-    focusText.style("opacity", 0)
-  }
+
+    function mousemove() {
+      // recover coordinate we need
+      var x0 = yearScale.invert(d3.pointer(this)[0]);
+      var i = bisect(nameLineData, x0, 1);
+
+      selectedData = nameLineData[i]
+      //console.log(selectedData)
+      focus.attr("cx", yearScale(selectedData["Year of Birth"]))
+        .attr("cy", countScale(selectedData.Count))
+      focusText.html("Year:" + selectedData["Year of Birth"] + "  ,  " + "Count:" + selectedData.Count)
+        .attr("x", yearScale(selectedData["Year of Birth"])+15)
+        .attr("y", countScale(selectedData.Count))
+      }
+    function mouseout() {
+      focus.style("opacity", 0)
+      focusText.style("opacity", 0)
+    }
 
 
-        //let nameScale = d3.scaleLinear().domain()
-        //var linegen = d3.line()
-        //                .x(function(d) {return rankScale(d.rank)})
-        //                .y(function(d) {return rankScale(d.rank)})
+          //let nameScale = d3.scaleLinear().domain()
+          //var linegen = d3.line()
+          //                .x(function(d) {return rankScale(d.rank)})
+          //                .y(function(d) {return rankScale(d.rank)})
 
 
-
-
-
-
-
-
-
-//console.log(nameLineData)
 
       }//end of PROMISE
 
 
 
     requestData()
-  </script>
+</script>
 
 
 </body>
