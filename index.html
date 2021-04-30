@@ -224,6 +224,7 @@ justify-content: center;
 
       var chosenYear = 2017
       var rank = 3
+      var chosenName = "EMMA"
 
       var groupbyNames = d3.nest() // nest function allows to group the calculation per level of a factor
         .key(function(d) { return d["Child's First name"];})
@@ -255,6 +256,7 @@ justify-content: center;
         rankExtent = d3.extent(nameBubbleData, d => d['Rank']);
         rankScale = d3.scaleLinear().domain(rankExtent).range([bubblePadding, bubblePaddedHeight]);
         bubbleLayer.selectAll("*").remove();
+        bubbleLegend.selectAll("*").remove();
 
 
 
@@ -319,7 +321,7 @@ justify-content: center;
 
 
       // Update the chart for a new tick of the simulation
-      function render() {
+      function render(d) {
         //console.log(nameBubbleData)
         let labels = bubbleLegend.selectAll("text.label").data(nameBubbleData)
              .join(
@@ -360,6 +362,7 @@ justify-content: center;
                                 .attr("cx", 0)
                                 .attr("cy", 0)
                                 .attr("fill", d => colorScale(d.Ethnicity))
+                                .on("click", clickBubble)
                                 // .call( d3.drag().on("start",dragstart)
                                 //                 .on("drag",dragging)
                                 //                 .on("end",dragend) )
@@ -574,10 +577,10 @@ d3.select("#selectButton")
       .on('mouseout', mouseout);
 
 
-      // This allows to find the closest X index of the mouse:
-    var bisect = d3.bisector(d=> d['Year of Birth']).left;
+    //   // This allows to find the closest X index of the mouse:
+     var bisect = d3.bisector(d=> d['Year of Birth']).left;
 
-    // Create the circle that travels along the curve of chart
+    // // Create the circle that travels along the curve of chart
     var focus = svg.append('g')
       .append('circle')
         .style("fill", "none")
@@ -585,7 +588,7 @@ d3.select("#selectButton")
         .attr('r', 8.5)
         .style("opacity", 0)
 
-    // Create the text that travels along the curve of chart
+    // // Create the text that travels along the curve of chart
     var focusText = svg
       .append('g')
       .append('text')
@@ -593,41 +596,31 @@ d3.select("#selectButton")
         .attr("text-anchor", "left")
         .attr("alignment-baseline", "middle")
 
-    // Add the line
-    // svg
-    //   .append("path")
-    //   .datum(nameLineData)
-    //   .attr("fill", "none")
-    //   .attr("stroke", "steelblue")
-    //   .attr("stroke-width", 1.5)
-    //   .attr("d", d3.line()
-    //     .x(function(d) { return yearScale(d["Year of Birth"]) })
-    //     .y(function(d) { return countScale(d.Count) })
-    //     )
 
-      svg.append("g")
-      .selectAll("dot")
-      .data(nameLineData)
-      .enter()
-      .append("circle")
-      .attr("cx", function(d) {return yearScale(d['Year of Birth'])})
-      .attr("cy", function(d){return countScale(d['Count'])})
-      .attr("r", 5)
-      .attr("fill", "#69b3a2")
+
+    //   svg.append("g")
+    //   .selectAll("dot")
+    //   .data(nameLineData)
+    //   .enter()
+    //   .append("circle")
+    //   .attr("cx", function(d) {return yearScale(d['Year of Birth'])})
+    //   .attr("cy", function(d){return countScale(d['Count'])})
+    //   .attr("r", 5)
+    //   .attr("fill", "#69b3a2")
 
     // Create a rect on top of the svg area: this rectangle recovers mouse position
 
-      svg.append('rect')
-      .style("fill", "none")
-      .style("pointer-events", "all")
-      .attr('width', width)
-      .attr('height', height)
-      .on('mouseover', mouseover)
-      .on('mousemove', mousemove)
-      .on('mouseout', mouseout);
+      // svg.append('rect')
+      // .style("fill", "none")
+      // .style("pointer-events", "all")
+      // .attr('width', width)
+      // .attr('height', height)
+      // .on('mouseover', mouseover)
+      // .on('mousemove', mousemove)
+      // .on('mouseout', mouseout);
 
 
-    // What happens when the mouse move -> show the annotations at the right positions.
+    //What happens when the mouse move -> show the annotations at the right positions.
     function mouseover() {
       focus.style("opacity", 1)
       focusText.style("opacity",1)
@@ -649,6 +642,19 @@ d3.select("#selectButton")
     function mouseout() {
       focus.style("opacity", 0)
       focusText.style("opacity", 0)
+    }
+
+    function clickBubble(event, d){
+      //console.log(d['Year of Birth'] + d.Ethnicity )
+      console.log(d)
+      //hightlight bubble
+      d3.select(this).transition()
+        .attr("r", 36)
+      .transition()
+      .attr("r", 26)
+
+        
+
     }
 
 
