@@ -19,21 +19,20 @@
       font-size: 20px;
     }
 
+
     text.bubbleTitle{
       font-family: 'Pangolin', cursive;
       font-size: 20px;
     }
+    #bbtitle{
+      font-size:20px;
+      margin-top:-6px;
+    }
 
-  #bubbleGraphTitle{
-    font-family: 'Pangolin', cursive;
-    position:absolute;
-    font-size: 20px;
-    left: 365px;
-    top:235px;
-
-  }
-
-
+    .select{
+      display: flex;
+      justify-content: center;
+    }
 
     .linechart{
       display: flex;
@@ -44,8 +43,12 @@
       /* display: inline-block; */
       display: flex;
       justify-content: center;
+      align-items: center;
+      vertical-align: middle;
       top: 10px;
       left:30px;
+      flex-direction: column;
+
 
     }
     .bar{
@@ -211,9 +214,9 @@ justify-content: center;
 
 
 <div class="barandBubble">
-  <div class="bubble" text-align="center">
-    <h1 id="bubbleGraphTitle">Popular Baby Names</h1>
-    <svg id="bubbleGraph" height="350" width="800" >
+  <div class="bubble" >
+    <text id="bbtitle">Popular Baby Names</text>
+    <svg id="bubbleGraph" height="350" width="800">
     </svg>
   </div>
 
@@ -262,7 +265,7 @@ justify-content: center;
     const requestData = async () => {
       //set default
       var chosenYear = 2017
-      var rank = 10
+      var rank = 3
       var chosenName = "ISABELLA"
       var chosenEthnicity = "HISPANIC"
       var chosenGender = "FEMALE"
@@ -548,7 +551,7 @@ d3.select("#selectButton")
   barLayer.append("text")
            .attr('class', 'title')
            .attr('x', 300)
-           .attr('y', 17)
+           .attr('y', 16)
            .attr("text-anchor","middle")
            .attr("font-size","18px")
            .text('Number of Newborn Babies');
