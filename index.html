@@ -718,12 +718,6 @@ d3.select("#selectButton")
       nameLineData.sort((a,b) => d3.ascending(a['Year of Birth'], b['Year of Birth']));
 
 
-      lineLegend.append("g")
-        .attr("transform", "translate(0," + lineChartHeight + ")")
-        .call(bottomAxis);
-
-
-
       lineGen = d3.line()
                       .x(function(d) {return yearScale(d['Year of Birth'])})
                       .y(function(d){return countScale(d['Count'])})
