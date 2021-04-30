@@ -7,13 +7,15 @@
     @import url('https://fonts.googleapis.com/css2?family=Pangolin&display=swap');
     html{
       font-family: 'Pangolin', cursive;
-      font-size: 15px;
     }
 
     text{
       font-family: 'Pangolin', cursive;
-      font-size: 15px;
+      font-size: 14px;
     }
+
+
+
     .linechart{
       display: flex;
       justify-content: center;
@@ -370,6 +372,7 @@ justify-content: center;
                              .text(function(d){return d["Child's First name"]})
                              .attr("text-anchor", "middle")
                              .attr("alignment-baseline", "ideographic")
+                             .on("click", clickBubble)
 
 
              )
@@ -382,7 +385,8 @@ justify-content: center;
                              //.attr("stroke","#333")
                              .text(d=> "#"+d["Rank"])
                              .attr("text-anchor", "middle")
-                             .attr("alignment-baseline", "hanging"),
+                             .attr("alignment-baseline", "hanging")
+                             .on("click", clickBubble)
 
 
 
