@@ -4,11 +4,22 @@
   <script src="https://d3js.org/d3.v6.min.js"></script>
   <script src="https://d3js.org/d3-collection.v1.min.js"></script>
   <script src="https://unpkg.com/d3-simple-slider"></script>
+  <script src="https://code.jquery.com/jquery-2.2.4.min.js"></script>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
 
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Pangolin&display=swap');
     html{
       font-family: 'Pangolin', cursive;
+    }
+
+    div{
+      font-family: 'Pangolin', cursive;
+    }
+
+    body{
+      background-color: #FAF8F3
     }
 
     text{
@@ -31,10 +42,128 @@
       margin-top:-6px;
     }
 
-  .slider{
-  display: flex;
-  justify-content: center;
-}
+
+    .face{
+      height: 250px;
+      width: 314px;
+      background-size: cover;
+      margin-left: 20px;
+      margin-right: 20px;
+      
+    }
+
+    .eye {
+      border-radius: 22px;
+      /*top:55px;*/
+      /*margin-top: 1em;*/
+      height: 22px;
+      width: 22px;
+      display: inline-block;
+      
+      text-align: center;
+      position: relative;
+      background: #FFF;
+    }
+
+    #right1{
+      left:25px;
+      top:70px;
+    }
+    #left1{
+      left:90px;
+      top:70px;
+    }
+    
+
+    #right2{
+      left:116px;
+      top:48px;
+    }
+    #left2{
+      left:182px;
+      top:48px;
+    }
+    #right2.eye::after{
+      background: #96C0FF
+    }
+    #left2.eye::after{
+      background: #96C0FF
+    }
+
+    #right3{
+      left:26px;
+      top:49px;
+    }
+    #left3{
+      left:92px;
+      top:49px;
+    }
+
+    #right4{
+      left:113px;
+      top:64px;
+    }
+    #left4{
+      left:180px;
+      top:64px;
+    }
+    #right4.eye::after{
+      background: grey
+    }
+    #left4.eye::after{
+      background: grey
+    }
+   
+
+    .eye.animate {
+      transition: all 100ms;
+    }
+
+    .eye:after {
+      content: " ";
+      /*eye to eyewhite distance*/
+      bottom: 1px;
+      right: 1px;
+      position: absolute;
+      width: 15px;
+      height: 15px;
+      background: #50280D;
+      border-radius: 15px;
+    }
+
+    #animate {
+      outline: none;
+      background: #FFF;
+      border: solid thin #000;
+      padding: 1px;
+      margin: 1px;
+      position: absolute;
+      top: 5px;
+      right: 5px;
+      color: #50280D;
+      transition: all 300ms;
+      cursor: pointer;
+    }
+
+    #animate:hover {
+      background: #000;
+      color: #FFF;
+      border: solid thin white;
+    }
+
+
+    .sticky {
+      position: fixed;
+      top: 0;
+      width: 100%;}
+
+    
+    
+
+    .slider{
+    display: flex;
+    justify-content: center;
+    }
 
     .linechart{
       display: flex;
@@ -74,7 +203,7 @@
     }
     .my-legendA{
       display: flex;
-justify-content: center;
+      justify-content: center;
       top:65px;
       left:430px;
     }
@@ -163,16 +292,38 @@ justify-content: center;
       stroke: none;
     }
 
-
-
-
-
-
   </style>
 </head>
 <body>
   <div style="text-align:center;">
     <h1>Baby Names and Births in NYC</h1>
+  </div>
+
+  <div id="project_container">
+    <div class="row" id="projectbox">
+      <div class="col-sm-4">
+        <div class='face' id= 'leftbaby' style="background-image: url('leftbaby.png');">
+          <div class='eye' id="left1"></div>
+          <div class='eye' id="right1"></div>
+          <div class='eye' id="left2"></div>
+          <div class='eye' id="right2"></div>
+        </div>
+      </div>
+
+      <div class="col-sm-4"></div>
+      
+      
+
+      <div class="col-sm-4">
+        <div class='face' id= 'rightbaby' style="background-image: url('rightbaby.png');">
+          <div class='eye' id="left3"></div>
+          <div class='eye' id="right3"></div>
+          <div class='eye' id="left4"></div>
+          <div class='eye' id="right4"></div>
+        </div>
+      </div>
+
+    </div>
   </div>
 
   <div class='my-legend' text-align="center">
@@ -230,6 +381,63 @@ justify-content: center;
 </div>
 
   <script>
+    //source:https://codepen.io/iaks/full/VeBJEP
+    $("#projectbox").mousemove(function(event) {
+      var eye = $("#leftbaby .eye");
+      var x = (eye.offset().left) + (eye.width() / 2);
+      var y = (eye.offset().top) + (eye.height() / 2);
+      var rad = Math.atan2(event.pageX - x, event.pageY - y);
+      var rot = (rad * (180 / Math.PI) * -1) + 0;
+      eye.css({
+        '-webkit-transform': 'rotate(' + rot + 'deg)',
+        '-moz-transform': 'rotate(' + rot + 'deg)',
+        '-ms-transform': 'rotate(' + rot + 'deg)',
+        'transform': 'rotate(' + rot + 'deg)'
+  });
+});
+
+    $("#projectbox").mousemove(function(event) {
+      var eye = $("#rightbaby .eye");
+      var x = (eye.offset().left) + (eye.width() / 2);
+      var y = (eye.offset().top) + (eye.height() / 2);
+      var rad = Math.atan2(event.pageX - x, event.pageY - y);
+      var rot = (rad * (180 / Math.PI) * -1) + 0;
+      eye.css({
+        '-webkit-transform': 'rotate(' + rot + 'deg)',
+        '-moz-transform': 'rotate(' + rot + 'deg)',
+        '-ms-transform': 'rotate(' + rot + 'deg)',
+        'transform': 'rotate(' + rot + 'deg)'
+  });
+});
+
+
+
+
+
+
+    // When the user scrolls the page, execute myFunction
+    window.onscroll = function() {myFunction()};
+    // Get the navbar
+    var navbar = document.getElementById("yearSlider");
+    // Get the offset position of the navbar
+    var sticky = navbar.offsetTop;
+    // Add the sticky class to the navbar when you reach its scroll position. Remove "sticky" when you leave the scroll position
+    function myFunction() {
+      if (window.pageYOffset >= sticky) {
+        navbar.classList.add("sticky")
+        console.log("1123")
+      } else {
+        navbar.classList.remove("sticky");
+      }
+    }
+
+
+
+
+
+
+
+
   	const bubbleLayer = d3.select("#bubbleGraph").append("g");
   	const bubbleLegend = d3.select("#bubbleGraph").append("g");
 
@@ -745,8 +953,8 @@ d3.select('#yearSlider')
       //hightlight bubble
       d3.select(this).transition()
         .attr("r", 36)
-      .transition()
-      .attr("r", 26)
+        .transition()
+        .attr("r", 26)
 
       updateLineChart()
     }
