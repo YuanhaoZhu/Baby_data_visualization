@@ -223,7 +223,7 @@
     text-align: left;
     margin-bottom: 8px;
     font-weight: bold;
-    font-size: 90%;
+    /*font-size: 90%;*/
     }
   .my-legend .legend-scale ul {
     margin: 0;
@@ -234,17 +234,17 @@
   .my-legend .legend-scale ul li {
     display: block;
     float: left;
-    width: 50px;
+    width: 110px;
     margin-bottom: 6px;
     text-align: center;
-    font-size: 80%;
+    /*font-size: 80%;*/
     list-style: none;
     }
   .my-legend ul.legend-labels li span {
     display: block;
     float: left;
     height: 15px;
-    width: 50px;
+    width: 110px;
     }
 
   .my-legend a {
@@ -256,7 +256,7 @@
     text-align: left;
     margin-bottom: 8px;
     font-weight: bold;
-    font-size: 90%;
+    /*font-size: 90%;*/
     }
   .my-legendA .legend-scaleA ul {
     margin: 0;
@@ -270,7 +270,7 @@
     width: 50px;
     margin-bottom: 6px;
     text-align: center;
-    font-size: 80%;
+    /*font-size: 80%;*/
     list-style: none;
     }
   .my-legendA ul.legend-labelA li span {
@@ -295,8 +295,22 @@
   </style>
 </head>
 <body>
-  <div style="text-align:center;">
+  <div style="text-align:center; padding:50px;">
     <h1>Baby Names and Births in NYC</h1>
+    
+  </div>
+
+  <div style="padding-left:200px; padding-right:200px;">
+    <p>Choosing a perfect name for your future baby can be an important decision. Should you choose a modern and popular name, should you pick a traditional name that will stand the test of time, or should you select a very unique name?</p> 
+    <p>Fortunately, we made interactive data visualization to help you choose the perfect name for your future baby. </p>
+    <ul>
+      <li>Colors in all visualizations are consistently representing ethnicity and gender with the legend shown above.</li>
+      <li><a href="#sticky">Choose a rank</a> from the drop-down menu to see the top-N popular baby names in the bubble chart. </li>
+      <li>Slide through different years to see how the popular names change throughout time. The number of newborn babies from different ethnicity will be updated accordingly. </li>
+      <li>Click on the bubble to see the trend of popularity for that name with the specific ethnicity.</li>
+    </ul>
+    <p>Data were collected through the civil birth registration of New York City from 2011 to 2017.</p>
+    
   </div>
 
   <div id="project_container">
@@ -311,7 +325,18 @@
       </div>
 
       <div class="col-sm-4">
-        <h3 style="text-align: right;">What's your name?</h3>
+        <div style="background-image: url('2.png');background-width:200px;background-repeat: no-repeat; padding:10px">
+          <h3 style="text-align: left; padding: 5px;margin-left: 30px;">What's your name?</h3>
+          <!-- <h3 style="text-align: left;">My name is</h3> -->
+        </div>
+        <br>
+        <div style="background-image: url('1.png');background-width:200px;background-repeat: no-repeat; padding:10px">
+          <!-- <h3 style="text-align: right;">What's your name?</h3> -->
+          <h3 style="text-align: left; padding: 5px;margin-right: 30px;">My name is <input type="text" placeholder="e.g.EMMA" id="myInput" style="width: 120px"></h3>
+        </div>
+        <div style="text-align: right">
+          <button type="button" onclick="getInputValue();">Send</button>
+        </div>
       </div>
       
       
@@ -329,20 +354,24 @@
   </div>
 
   <div class='my-legend' text-align="center">
-  <div class='legend-title'></div>
-  <div class='legend-scale'>
-    <ul class='legend-labels'>
-      <li><span style='background:#FEF1E2;'></span>White Non Hispanic</li>
-      <li><span style='background:#E28E51;'></span>Hispanic</li>
-      <li><span style='background:#934914;'></span>Black Non Hispanic</li>
-      <li><span style='background:#FDDEBB;'></span>Asian and Pacific Islander</li>
-      <li><span style='background:#687980;'></span>other</li>
-    </ul>
-  </div>
-  </div>
+      <div class='legend-title'></div>
+      <div class='legend-scale'>
+        <ul class='legend-labels'>
+          <li><span style='background:#FEF1E2;'></span>White Non Hispanic</li>
+          <li><span style='background:#E28E51;'></span>Hispanic</li>
+          <li><span style='background:#934914;'></span>Black Non Hispanic</li>
+          <li><span style='background:#FDDEBB;'></span>Asian and Pacific Islander</li>
+          <li><span style='background:#687980;'></span>other</li>
+          <li><span></span></li>
+          <li><span style='background:#99ccff;'></span>Male</li>
+          <li><span style='background:#ffc0cb;'></span>Female</li>
+        </ul>
+      </div>
+      </div>
 
 
-  <div class='my-legendA' text-align="center">
+
+<!--   <div class='my-legendA' text-align="center">
   <div class='legend-titleA'></div>
   <div class='legend-scaleA'>
     <ul class='legend-labelA'>
@@ -350,16 +379,25 @@
       <li><span style='background:#ffc0cb;'></span>Female</li>
     </ul>
   </div>
+  </div> -->
+
+  <div id="sticky" style="background-color:#FAF8F3; padding-top: 20px">
+    <div class= "slider" id="yearSlider" ><h5>Choose a rank
+       <select id="selectRank"><option value="none" selected disabled hidden>Select</option></select></h5><h5 style="margin-left: 40px">Slide to choose different year</h5></div>
+   <!--  <div class="rankSlector" style="margin-left: 200px;margin-bottom: 10px">
+      <h5>Choose a rank
+       <select id="selectRank"><option value="none" selected disabled hidden>Select</option></select></h5>
+    </div> -->
+
+      
   </div>
 
-  <div class= "slider" id="yearSlider"></div>
-
-  <div class="slidecontainer">
+ <!--  <div class="slidecontainer">
     <div class="rankSlector">
       <text>Choose a rank</text>
      <select id="selectRank"><option value="none" selected disabled hidden>Select</option></select>
     </div>
-  </div>
+  </div> -->
 
 
 
@@ -417,21 +455,23 @@
 
 
 
-    // When the user scrolls the page, execute myFunction
-    window.onscroll = function() {myFunction()};
-    // Get the navbar
-    var navbar = document.getElementById("yearSlider");
-    // Get the offset position of the navbar
-    var sticky = navbar.offsetTop;
-    // Add the sticky class to the navbar when you reach its scroll position. Remove "sticky" when you leave the scroll position
-    function myFunction() {
-      if (window.pageYOffset >= sticky) {
-        navbar.classList.add("sticky")
-        console.log("1123")
-      } else {
-        navbar.classList.remove("sticky");
-      }
-    }
+    // // When the user scrolls the page, execute myFunction
+    // window.onscroll = function() {myFunction()};
+    // // Get the navbar
+    // var navbar = document.getElementById("sticky");
+    // // Get the offset position of the navbar
+    // var sticky = navbar.offsetTop;
+    // // Add the sticky class to the navbar when you reach its scroll position. Remove "sticky" when you leave the scroll position
+    // function myFunction() {
+    //   if (window.pageYOffset >= sticky) {
+    //     navbar.classList.add("sticky")
+    //   } else {
+    //     navbar.classList.remove("sticky");
+    //   }
+    // }
+
+
+    
 
 
 
@@ -504,12 +544,36 @@
 
 
 
+
+
+
+
+
+
+
+
+
+
       var groupbyNames = d3.nest() // nest function allows to group the calculation per level of a factor
         .key(function(d) { return d["Child's First name"];})
         .entries(bbnames);
         console.log(groupbyNames)
       const groupbyNamess = groupbyNames.filter((d)=>d.key==='EMMA')
       console.log(groupbyNamess)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
       //var v =  document.getElementById("myRange").value
       //Add options to selectRank
       var ranks=[1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
@@ -575,6 +639,7 @@
         rankUpdate(rank);
         //console.log(rank)
       });
+
 
 
 
@@ -960,6 +1025,10 @@ d3.select('#yearSlider')
 
       updateLineChart()
     }
+
+
+
+
 
     function updateLineChart(){
       lineLayer.selectAll("*").remove();
