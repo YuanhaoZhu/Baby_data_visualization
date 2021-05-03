@@ -42,6 +42,10 @@
       margin-top:-6px;
     }
 
+    .vizTitle{
+      margin-top: 40px;
+    }
+
 
     .face{
       height: 250px;
@@ -59,7 +63,7 @@
       height: 22px;
       width: 22px;
       display: inline-block;
-      
+
       text-align: center;
       position: relative;
       background: #FFF;
@@ -73,7 +77,7 @@
       left:90px;
       top:70px;
     }
-    
+
 
     #right2{
       left:116px;
@@ -113,7 +117,7 @@
     #left4.eye::after{
       background: grey
     }
-   
+
 
     .eye.animate {
       transition: all 100ms;
@@ -157,8 +161,8 @@
       top: 0;
       width: 100%;}
 
-    
-    
+
+
 
     .slider{
     display: flex;
@@ -295,9 +299,9 @@
   </style>
 </head>
 <body>
-  <div style="text-align:center; padding:50px;">
-    <h1>Baby Names and Births in NYC</h1>
-    
+
+  <div class='vizTitle' style="text-align:center;">
+    <h1>Baby Names and Births in NYC</h1> 
   </div>
 
   <div style="padding-left:200px; padding-right:200px;">
@@ -338,8 +342,8 @@
           <button type="button" onclick="getInputValue();">Send</button>
         </div>
       </div>
-      
-      
+
+
 
       <div class="col-sm-4">
         <div class='face' id= 'rightbaby' style="background-image: url('rightbaby.png');">
