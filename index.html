@@ -932,6 +932,109 @@ d3.select('#yearSlider')
 
 
 
+
+
+
+
+  let mouseGroup = lineLayer.append("g");
+  let xMarker = mouseGroup.append("line")
+    .attr("id","xMarker")
+    .attr("fill","none")
+    .attr("stroke","black")
+    .attr("stroke-width",1)
+    .attr("y1",0)
+    .attr("y2",lineChartHeight)
+    .attr("visibility","hidden");
+  
+  let valueMarker = mouseGroup.append("circle")
+    .attr("id","valueMarker")
+    .attr("fill","none")
+    .attr("stroke","black")
+    .attr("stroke-width",2)
+    .attr("r",10)
+    .attr("visibility","hidden");
+  
+  let label = mouseGroup.append("text")
+    .attr("id","label")
+    .attr("visibility","hidden");
+
+
+let activeRegion = mouseGroup.append("rect")
+    .attr("id","activeRegion")
+    .attr("width",lineChartWidth)
+    .attr("height",lineChartHeight)
+    .attr("fill","none")
+    .attr("pointer-events","all");
+
+
+  let findDate = d3.bisector( d => d['Year of Birth'] ).right;
+  
+  // activeRegion is now the top-most item (even if invisible), so it should always catch the mouse events and never clash
+  activeRegion.on("mouseover", function() {
+    // Show the marker and label when mousing over
+    xMarker.attr("visibility","");
+    valueMarker.attr("visibility","");
+    label.attr("visibility",""); 
+  });
+
+  activeRegion.on("mouseout", function() {
+    // Hide them when mousing out of chart
+    xMarker.attr("visibility","hidden");
+    valueMarker.attr("visibility","hidden");
+    label.attr("visibility","hidden"); 
+  });
+
+  activeRegion.on("mousemove", function(evt) {
+    let location = d3.pointer(evt);
+    let x = location[0];
+    let xDate = yearScale.invert(x);
+    let index = findDate(nameLineData, xDate);
+
+    let d = nameLineData[index];
+  
+    let xPos = yearScale(d['Year of Birth'])
+    let yPos = countScale(d['Count']);
+  
+    xMarker.attr("x1",xPos).attr("x2",xPos);
+    valueMarker.attr("cx",xPos).attr("cy",yPos);
+  
+    let txt = "Rank:" + d['Rank'] 
+
+    label.text(txt); 
+    if (yPos > lineChartHeight / 2.0 && xPos < lineChartWidth / 2.0) { 
+      label.attr("x",xPos+ 10).attr("y", yPos - 40).attr("text-anchor","start");
+    }
+    else if (yPos > lineChartHeight / 2.0 && xPos > lineChartWidth / 2.0){
+      label.attr("x",xPos- 10).attr("y", yPos - 40).attr("text-anchor","end");
+    }
+    else if (yPos < lineChartHeight / 2.0 && xPos > lineChartWidth / 2.0){
+      label.attr("x",xPos- 10).attr("y", yPos - 40).attr("text-anchor","end");
+    }
+    else { 
+      label.attr("x",xPos + 10).attr("y", yPos + 40).attr("text-anchor","start"); 
+    }
+  });
+  
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     function clickBubble(event, d){
       //console.log(d['Year of Birth'] + d.Ethnicity )
       console.log(d)
@@ -1014,6 +1117,87 @@ d3.select('#yearSlider')
            .attr('x', 15)
            .attr('y', 35)
            .text("count")
+
+
+
+      let mouseGroup = lineLayer.append("g");
+  let xMarker = mouseGroup.append("line")
+    .attr("id","xMarker")
+    .attr("fill","none")
+    .attr("stroke","black")
+    .attr("stroke-width",1)
+    .attr("y1",0)
+    .attr("y2",lineChartHeight)
+    .attr("visibility","hidden");
+  
+  let valueMarker = mouseGroup.append("circle")
+    .attr("id","valueMarker")
+    .attr("fill","none")
+    .attr("stroke","black")
+    .attr("stroke-width",2)
+    .attr("r",10)
+    .attr("visibility","hidden");
+  
+  let label = mouseGroup.append("text")
+    .attr("id","label")
+    .attr("visibility","hidden");
+
+
+let activeRegion = mouseGroup.append("rect")
+    .attr("id","activeRegion")
+    .attr("width",lineChartWidth)
+    .attr("height",lineChartHeight)
+    .attr("fill","none")
+    .attr("pointer-events","all");
+
+
+  let findDate = d3.bisector( d => d['Year of Birth'] ).right;
+  
+  // activeRegion is now the top-most item (even if invisible), so it should always catch the mouse events and never clash
+  activeRegion.on("mouseover", function() {
+    // Show the marker and label when mousing over
+    xMarker.attr("visibility","");
+    valueMarker.attr("visibility","");
+    label.attr("visibility",""); 
+  });
+
+  activeRegion.on("mouseout", function() {
+    // Hide them when mousing out of chart
+    xMarker.attr("visibility","hidden");
+    valueMarker.attr("visibility","hidden");
+    label.attr("visibility","hidden"); 
+  });
+
+  activeRegion.on("mousemove", function(evt) {
+    let location = d3.pointer(evt);
+    let x = location[0];
+    let xDate = yearScale.invert(x);
+    let index = findDate(nameLineData, xDate);
+
+    let d = nameLineData[index];
+  
+    let xPos = yearScale(d['Year of Birth'])
+    let yPos = countScale(d['Count']);
+  
+    xMarker.attr("x1",xPos).attr("x2",xPos);
+    valueMarker.attr("cx",xPos).attr("cy",yPos);
+  
+    let txt = "Rank:" + d['Rank'] 
+
+    label.text(txt); 
+    if (yPos > lineChartHeight / 2.0 && xPos < lineChartWidth / 2.0) { 
+      label.attr("x",xPos+ 10).attr("y", yPos - 40).attr("text-anchor","start");
+    }
+    else if (yPos > lineChartHeight / 2.0 && xPos > lineChartWidth / 2.0){
+      label.attr("x",xPos- 10).attr("y", yPos - 40).attr("text-anchor","end");
+    }
+    else if (yPos < lineChartHeight / 2.0 && xPos > lineChartWidth / 2.0){
+      label.attr("x",xPos- 10).attr("y", yPos - 40).attr("text-anchor","end");
+    }
+    else { 
+      label.attr("x",xPos + 10).attr("y", yPos + 40).attr("text-anchor","start"); 
+    }
+  });
 
 
 
