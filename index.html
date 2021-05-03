@@ -855,8 +855,6 @@ d3.select('#yearSlider')
   const countScale = d3.scaleLinear().domain([0,450]).range([lineChartHeight,linePadding])
 
 
-
-
   // Y axis
   let lineYAxis = d3.axisLeft(countScale)
   let lineGridlines = d3.axisLeft(countScale)
@@ -876,23 +874,6 @@ d3.select('#yearSlider')
   lineLegend.append("g")
     .attr("transform", "translate(0," + lineChartHeight + ")")
     .call(bottomAxis);
-
-
-  //    // Y axis
-  // let lineYAxis = d3.axisLeft(countScale).ticks(7)
-  // let lineGridlines = d3.axisLeft(countScale)
-  //                       .tickSize(-lineChartWidth +linePadding)
-  //                       .tickFormat("")
-  // lineLegend.append("g")
-  //   .attr("class", "y axis")
-  //   //.attr("transform",`translate(${linePadding},${linePadding})`)
-  //   .call(lineYAxis)
-  // lineLegend.append("g")
-  //   .attr("class", "y gridlines")
-  //   .attr("transform","translate(" + linePadding + ",0)")
-  //   .call(lineGridlines);
-
-
 
 
   var lineGen = d3.line()
@@ -935,86 +916,21 @@ d3.select('#yearSlider')
            .text("Trend of \"" + capitalize(chosenName) + "\" among " + capitalize(chosenEthnicity) + " populations");
 
 
+      lineLayer
+        .selectAll("myPoints")
+        .data(nameLineData)
+        .enter()
+        .append("text")
+          .attr("x",d=> yearScale(d['Year of Birth']))
+          .attr("y",d=> countScale(d['Count']) - 10)
+          .text(d=> d['Count'])
+
+      lineLayer.append("text")
+           .attr('x', 15)
+           .attr('y', 35)
+           .text("count")
 
 
-  // Create a rect on top of the svg area: this rectangle recovers mouse position
-    // lineGraph
-    //   .append('rect')
-    //   .style("fill", "none")
-    //   .style("pointer-events", "all")
-    //   .attr('width', width)
-    //   .attr('height', height)
-    //   .on('mouseover', mouseover)
-    //   .on('mousemove', mousemove)
-    //   .on('mouseout', mouseout);
-
-
-    // //   // This allows to find the closest X index of the mouse:
-    //  var bisect = d3.bisector(d=> d['Year of Birth']).left;
-
-    // // // Create the circle that travels along the curve of chart
-    // var focus = svg.append('g')
-    //   .append('circle')
-    //     .style("fill", "none")
-    //     .attr("stroke", "black")
-    //     .attr('r', 8.5)
-    //     .style("opacity", 0)
-
-    // // // Create the text that travels along the curve of chart
-    // var focusText = svg
-    //   .append('g')
-    //   .append('text')
-    //     .style("opacity", 0)
-    //     .attr("text-anchor", "left")
-    //     .attr("alignment-baseline", "middle")
-
-
-
-    //   svg.append("g")
-    //   .selectAll("dot")
-    //   .data(nameLineData)
-    //   .enter()
-    //   .append("circle")
-    //   .attr("cx", function(d) {return yearScale(d['Year of Birth'])})
-    //   .attr("cy", function(d){return countScale(d['Count'])})
-    //   .attr("r", 5)
-    //   .attr("fill", "#69b3a2")
-
-    // Create a rect on top of the svg area: this rectangle recovers mouse position
-
-      // svg.append('rect')
-      // .style("fill", "none")
-      // .style("pointer-events", "all")
-      // .attr('width', width)
-      // .attr('height', height)
-      // .on('mouseover', mouseover)
-      // .on('mousemove', mousemove)
-      // .on('mouseout', mouseout);
-
-
-    //What happens when the mouse move -> show the annotations at the right positions.
-    // function mouseover() {
-    //   focus.style("opacity", 1)
-    //   focusText.style("opacity",1)
-    // }
-
-    // function mousemove() {
-    //   // recover coordinate we need
-    //   var x0 = yearScale.invert(d3.pointer(this)[0]);
-    //   var i = bisect(nameLineData, x0, 1);
-
-    //   selectedData = nameLineData[i]
-    //   //console.log(selectedData)
-    //   focus.attr("cx", yearScale(selectedData["Year of Birth"]))
-    //     .attr("cy", countScale(selectedData.Count))
-    //   focusText.html("Year:" + selectedData["Year of Birth"] + "  ,  " + "Count:" + selectedData.Count)
-    //     .attr("x", yearScale(selectedData["Year of Birth"])+15)
-    //     .attr("y", countScale(selectedData.Count))
-    //   }
-    // function mouseout() {
-    //   focus.style("opacity", 0)
-    //   focusText.style("opacity", 0)
-    // }
 
     function clickBubble(event, d){
       //console.log(d['Year of Birth'] + d.Ethnicity )
@@ -1072,6 +988,7 @@ d3.select('#yearSlider')
           .attr("r", 6)
           .attr("stroke", d=> genderColorScale(chosenGender))
           .attr("stroke-width", 2)
+      
 
       lineLayer.append("text")
            .attr('class', 'title')
@@ -1080,6 +997,24 @@ d3.select('#yearSlider')
            .attr("text-anchor","middle")
            .attr("font-size",20)
            .text("Trend of \"" + capitalize(chosenName) + "\" among " + capitalize(chosenEthnicity) + " populations");
+
+
+
+
+      lineLayer
+        .selectAll("myPoints")
+        .data(nameLineData)
+        .enter()
+        .append("text")
+          .attr("x",d=> yearScale(d['Year of Birth']))
+          .attr("y",d=> countScale(d['Count']) - 10)
+          .text(d=> d['Count'])
+
+      lineLayer.append("text")
+           .attr('x', 15)
+           .attr('y', 35)
+           .text("count")
+
 
 
 
