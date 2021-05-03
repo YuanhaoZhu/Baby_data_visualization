@@ -337,10 +337,10 @@
         <br>
         <div style="background-image: url('1.png');background-width:200px;background-repeat: no-repeat; padding:10px">
           <!-- <h3 style="text-align: right;">What's your name?</h3> -->
-          <h3 style="text-align: left; padding: 5px;margin-right: 30px;">My name is <input type="text" placeholder="e.g.EMMA" id="myInput" style="width: 120px"></h3>
+          <h3 style="text-align: left; padding: 5px;margin-right: 30px;">My name is <input type="text" placeholder="e.g.James" id="myInput" style="width: 120px"></h3>
         </div>
         <div style="text-align: right">
-          <button type="button" onclick="getInputValue();">Send</button>
+          <button id="sendButton"type="button">Send</button>
         </div>
       </div>
 
@@ -458,33 +458,6 @@
 
 
 
-
-
-    // // When the user scrolls the page, execute myFunction
-    // window.onscroll = function() {myFunction()};
-    // // Get the navbar
-    // var navbar = document.getElementById("sticky");
-    // // Get the offset position of the navbar
-    // var sticky = navbar.offsetTop;
-    // // Add the sticky class to the navbar when you reach its scroll position. Remove "sticky" when you leave the scroll position
-    // function myFunction() {
-    //   if (window.pageYOffset >= sticky) {
-    //     navbar.classList.add("sticky")
-    //   } else {
-    //     navbar.classList.remove("sticky");
-    //   }
-    // }
-
-
-    
-
-
-
-
-
-
-
-
   	const bubbleLayer = d3.select("#bubbleGraph").append("g");
   	const bubbleLegend = d3.select("#bubbleGraph").append("g");
 
@@ -540,18 +513,46 @@
                                                     && d["Ethnicity"]=== chosenEthnicity
                                                     && d['Gender']=== chosenGender
                                                   });
+      
+      var hispanicLineData = bbnames.filter((d)=>{return (d['Year of Birth']>= 2011)
+                                                    && d["Child's First name"]=== chosenName
+                                                    && d["Ethnicity"]=== "HISPANIC"
+                                                    && d['Gender']=== chosenGender
+                                                  });
+
+      var asianLineData = bbnames.filter((d)=>{return (d['Year of Birth']>= 2011)
+                                                    && d["Child's First name"]=== chosenName
+                                                    && d["Ethnicity"]=== "ASIAN AND PACIFIC ISLANDER"
+                                                    && d['Gender']=== chosenGender
+                                                  });
+      var blackLineData = bbnames.filter((d)=>{return (d['Year of Birth']>= 2011)
+                                                    && d["Child's First name"]=== chosenName
+                                                    && d["Ethnicity"]=== "BLACK NON HISPANIC"
+                                                    && d['Gender']=== chosenGender
+                                                  });
+      var whiteLineData = bbnames.filter((d)=>{return (d['Year of Birth']>= 2011)
+                                                    && d["Child's First name"]=== chosenName
+                                                    && d["Ethnicity"]=== "WHITE NON HISPANIC"
+                                                    && d['Gender']=== chosenGender
+                                                  });
+
+
+
 
 
       //sort
       nameLineData.sort((a,b) => d3.ascending(a['Year of Birth'], b['Year of Birth']));
+      hispanicLineData.sort((a,b) => d3.ascending(a['Year of Birth'], b['Year of Birth']));
+      asianLineData.sort((a,b) => d3.ascending(a['Year of Birth'], b['Year of Birth']));
+      blackLineData.sort((a,b) => d3.ascending(a['Year of Birth'], b['Year of Birth']));
+      whiteLineData.sort((a,b) => d3.ascending(a['Year of Birth'], b['Year of Birth']));
+
+
+
+
+
       // console.log(countDataList);
       //console.log(nameLineData)
-
-
-
-
-
-
 
 
 
@@ -563,17 +564,35 @@
         .key(function(d) { return d["Child's First name"];})
         .entries(bbnames);
         console.log(groupbyNames)
-      const groupbyNamess = groupbyNames.filter((d)=>d.key==='EMMA')
-      console.log(groupbyNamess)
+      var groupbyNamesNEW = groupbyNames.filter((d)=>d.key===chosenName)
+      console.log(groupbyNamesNEW)
+      groupbyNamesNEW.sort((a,b) => d3.ascending(a['Count'], b['Count']));
 
 
+      // function getInputValue(){
+      //       // Selecting the input element and get its value 
+      //       var inputVal = document.getElementById("myInput").value;
+            
+      //       // Displaying the value
+      //       chosenName = inputVal.toUpperCase()
+      //   }
 
+    d3.select("#sendButton").on("click", function(d) {
+        inputVal =  document.getElementById("myInput").value
+        chosenName = inputVal.toUpperCase()
+        
+        groupbyNamesNEW = groupbyNames.filter((d)=>d.key===chosenName)
+        groupbyNamesNEW.sort((a,b) => d3.ascending(a['Count'], b['Count']));
 
+        if(groupbyNamesNEW.length === 0){
+          alert("Sorry, this name has no record in our database, please type in another name.")
+        }
+        else{
+          chosenGender = Object.values(Object.values(groupbyNamesNEW)[0])[1][0]["Gender"]
+          updateOverallLineChart()
+        }
 
-
-
-
-
+      });
 
 
 
@@ -644,9 +663,6 @@
         rankUpdate(rank);
         //console.log(rank)
       });
-
-
-
 
       var nameBubbleData = bbnames.filter((d)=>{return d["Rank"] <= rank && d["Year of Birth"] === chosenYear;});
       console.log(nameBubbleData)
@@ -849,10 +865,10 @@ d3.select('#yearSlider')
   ////////////////////////////////////////////////////////////////////////////////////////////////////////////
   //Line chart
   console.log(nameLineData)
-  const yearScale = d3.scaleLinear().domain([2011, 2017]).range([linePadding,lineChartWidth])
-  const maxCount = d3.max(bbnames, (d) => { return Math.max(d["Count"]); });
+  var yearScale = d3.scaleLinear().domain([2011, 2017]).range([linePadding,lineChartWidth])
+  var maxCount = d3.max(bbnames, (d) => { return Math.max(d["Count"]); });
   console.log(maxCount)
-  const countScale = d3.scaleLinear().domain([0,450]).range([lineChartHeight,linePadding])
+  var countScale = d3.scaleLinear().domain([0,450]).range([lineChartHeight,linePadding])
 
 
   // Y axis
@@ -882,13 +898,8 @@ d3.select('#yearSlider')
                   .curve(d3.curveMonotoneX);
 
 
-  lineGen = d3.line()
-                      .x(function(d) {return yearScale(d['Year of Birth'])})
-                      .y(function(d){return countScale(d['Count'])})
-                      .curve(d3.curveMonotoneX);
-
       lineLayer.append("path")
-         .datum(nameLineData)
+         .datum(hispanicLineData)
          .attr("class","line")
          .attr("fill","none")
          .attr("stroke",d=> genderColorScale(chosenGender))
@@ -897,7 +908,7 @@ d3.select('#yearSlider')
 
       lineLayer
         .selectAll("myPoints")
-        .data(nameLineData)
+        .data(hispanicLineData)
         .enter()
         .append("circle")
           .attr("fill", d=> colorScale(d.Ethnicity))
@@ -907,113 +918,232 @@ d3.select('#yearSlider')
           .attr("stroke", d=> genderColorScale(chosenGender))
           .attr("stroke-width", 2)
 
+      
+
+
+      lineLayer.append("path")
+         .datum(asianLineData)
+         .attr("class","line")
+         .attr("fill","none")
+         .attr("stroke",d=> genderColorScale(chosenGender))
+         .attr("stroke-width", 4)
+         .attr("d",lineGen);
+      lineLayer
+        .selectAll("myPoints")
+        .data(asianLineData)
+        .enter()
+        .append("circle")
+          .attr("fill", d=> colorScale(d.Ethnicity))
+          .attr("cx", d=> yearScale(d['Year of Birth']))
+          .attr("cy", d=> countScale(d['Count']) )
+          .attr("r", 6)
+          .attr("stroke", d=> genderColorScale(chosenGender))
+          .attr("stroke-width", 2)
+     
+
+      lineLayer.append("path")
+         .datum(whiteLineData)
+         .attr("class","line")
+         .attr("fill","none")
+         .attr("stroke",d=> genderColorScale(chosenGender))
+         .attr("stroke-width", 4)
+         .attr("d",lineGen);
+      lineLayer
+        .selectAll("myPoints")
+        .data(whiteLineData)
+        .enter()
+        .append("circle")
+          .attr("fill", d=> colorScale(d.Ethnicity))
+          .attr("cx", d=> yearScale(d['Year of Birth']))
+          .attr("cy", d=> countScale(d['Count']) )
+          .attr("r", 6)
+          .attr("stroke", d=> genderColorScale(chosenGender))
+          .attr("stroke-width", 2)
+      
+
+
+      lineLayer.append("path")
+         .datum(blackLineData)
+         .attr("class","line")
+         .attr("fill","none")
+         .attr("stroke",d=> genderColorScale(chosenGender))
+         .attr("stroke-width", 4)
+         .attr("d",lineGen);
+      lineLayer
+        .selectAll("myPoints")
+        .data(blackLineData)
+        .enter()
+        .append("circle")
+          .attr("fill", d=> colorScale(d.Ethnicity))
+          .attr("cx", d=> yearScale(d['Year of Birth']))
+          .attr("cy", d=> countScale(d['Count']) )
+          .attr("r", 6)
+          .attr("stroke", d=> genderColorScale(chosenGender))
+          .attr("stroke-width", 2)
+      
+ lineLayer
+        .selectAll("myPoints")
+        .data(asianLineData)
+        .enter()
+        .append("text")
+          .attr("x",d=> yearScale(d['Year of Birth'])+10)
+          .attr("y",d=> countScale(d['Count']))
+          .text(d=> d['Count'])
+
+
+      lineLayer
+              .selectAll("myPoints")
+              .data(hispanicLineData)
+              .enter()
+              .append("text")
+                .attr("x",d=> yearScale(d['Year of Birth'])+10)
+                .attr("y",d=> countScale(d['Count']))
+                .text(d=> d['Count'])
+      lineLayer
+              .selectAll("myPoints")
+              .data(whiteLineData)
+              .enter()
+              .append("text")
+                .attr("x",d=> yearScale(d['Year of Birth'])+10)
+                .attr("y",d=> countScale(d['Count']))
+                .text(d=> d['Count'])
+      lineLayer
+        .selectAll("myPoints")
+        .data(blackLineData)
+        .enter()
+        .append("text")
+          .attr("x",d=> yearScale(d['Year of Birth'])+ 10)
+          .attr("y",d=> countScale(d['Count'])+10)
+          .text(d=> d['Count'])
+
       lineLayer.append("text")
            .attr('class', 'title')
            .attr('x', lineChartWidth/2 +linePadding/2)
            .attr('y', 17)
            .attr("text-anchor","middle")
            .attr("font-size",20)
-           .text("Trend of \"" + capitalize(chosenName) + "\" among " + capitalize(chosenEthnicity) + " populations");
-
-
-      lineLayer
-        .selectAll("myPoints")
-        .data(nameLineData)
-        .enter()
-        .append("text")
-          .attr("x",d=> yearScale(d['Year of Birth']))
-          .attr("y",d=> countScale(d['Count']) - 10)
-          .text(d=> d['Count'])
+           .text("Trend of \"" + capitalize(chosenName) + "\" from 2011 to 2017");
 
       lineLayer.append("text")
            .attr('x', 15)
            .attr('y', 35)
            .text("count")
 
+      lineLayer
+        .append("text")
+          .attr("x",d=> lineChartWidth + 30)
+          .attr("y",countScale(blackLineData[blackLineData.length -1]['Count']) + 10)
+          .attr("text-anchor", "start")
+          .text("Black")
+          .attr("fill", )
+  lineLayer
+        .append("text")
+          .attr("x",d=> lineChartWidth + 30)
+          .attr("y",countScale(asianLineData[asianLineData.length -1]['Count'])-10)
+          .attr("text-anchor", "start")
+          .text("Asian")
+          .attr("fill", )
+          lineLayer
+        .append("text")
+          .attr("x",d=> lineChartWidth + 30)
+          .attr("y",countScale(hispanicLineData[hispanicLineData.length -1]['Count']) -10)
+          .attr("text-anchor", "start")
+          .text("Hispanic")
+          .attr("fill", )
+          lineLayer
+        .append("text")
+          .attr("x",d=> lineChartWidth + 30)
+          .attr("y",countScale(whiteLineData[whiteLineData.length - 1]['Count']) -10)
+          .attr("text-anchor", "start")
+          .text("White")
+          .attr("fill", )
+
+    // console.log(countScale(hispanicLineData[0]['Count']))
 
 
 
 
 
 
-  let mouseGroup = lineLayer.append("g");
-  let xMarker = mouseGroup.append("line")
-    .attr("id","xMarker")
-    .attr("fill","none")
-    .attr("stroke","black")
-    .attr("stroke-width",1)
-    .attr("y1",0)
-    .attr("y2",lineChartHeight)
-    .attr("visibility","hidden");
+
+//   let mouseGroup = lineLayer.append("g");
+//   let xMarker = mouseGroup.append("line")
+//     .attr("id","xMarker")
+//     .attr("fill","none")
+//     .attr("stroke","black")
+//     .attr("stroke-width",1)
+//     .attr("y1",0)
+//     .attr("y2",lineChartHeight)
+//     .attr("visibility","hidden");
   
-  let valueMarker = mouseGroup.append("circle")
-    .attr("id","valueMarker")
-    .attr("fill","none")
-    .attr("stroke","black")
-    .attr("stroke-width",2)
-    .attr("r",10)
-    .attr("visibility","hidden");
+//   let valueMarker = mouseGroup.append("circle")
+//     .attr("id","valueMarker")
+//     .attr("fill","none")
+//     .attr("stroke","black")
+//     .attr("stroke-width",2)
+//     .attr("r",10)
+//     .attr("visibility","hidden");
   
-  let label = mouseGroup.append("text")
-    .attr("id","label")
-    .attr("visibility","hidden");
+//   let label = mouseGroup.append("text")
+//     .attr("id","label")
+//     .attr("visibility","hidden");
 
 
-let activeRegion = mouseGroup.append("rect")
-    .attr("id","activeRegion")
-    .attr("width",lineChartWidth)
-    .attr("height",lineChartHeight)
-    .attr("fill","none")
-    .attr("pointer-events","all");
+// let activeRegion = mouseGroup.append("rect")
+//     .attr("id","activeRegion")
+//     .attr("width",lineChartWidth)
+//     .attr("height",lineChartHeight)
+//     .attr("fill","none")
+//     .attr("pointer-events","all");
 
 
-  let findDate = d3.bisector( d => d['Year of Birth'] ).right;
+//   let findDate = d3.bisector( d => d['Year of Birth'] ).right;
   
-  // activeRegion is now the top-most item (even if invisible), so it should always catch the mouse events and never clash
-  activeRegion.on("mouseover", function() {
-    // Show the marker and label when mousing over
-    xMarker.attr("visibility","");
-    valueMarker.attr("visibility","");
-    label.attr("visibility",""); 
-  });
+//   // activeRegion is now the top-most item (even if invisible), so it should always catch the mouse events and never clash
+//   activeRegion.on("mouseover", function() {
+//     // Show the marker and label when mousing over
+//     xMarker.attr("visibility","");
+//     valueMarker.attr("visibility","");
+//     label.attr("visibility",""); 
+//   });
 
-  activeRegion.on("mouseout", function() {
-    // Hide them when mousing out of chart
-    xMarker.attr("visibility","hidden");
-    valueMarker.attr("visibility","hidden");
-    label.attr("visibility","hidden"); 
-  });
+//   activeRegion.on("mouseout", function() {
+//     // Hide them when mousing out of chart
+//     xMarker.attr("visibility","hidden");
+//     valueMarker.attr("visibility","hidden");
+//     label.attr("visibility","hidden"); 
+//   });
 
-  activeRegion.on("mousemove", function(evt) {
-    let location = d3.pointer(evt);
-    let x = location[0];
-    let xDate = yearScale.invert(x);
-    let index = findDate(nameLineData, xDate);
+//   activeRegion.on("mousemove", function(evt) {
+//     let location = d3.pointer(evt);
+//     let x = location[0];
+//     let xDate = yearScale.invert(x);
+//     let index = findDate(nameLineData, xDate);
 
-    let d = nameLineData[index];
+//     let d = nameLineData[index];
   
-    let xPos = yearScale(d['Year of Birth'])
-    let yPos = countScale(d['Count']);
+//     let xPos = yearScale(d['Year of Birth'])
+//     let yPos = countScale(d['Count']);
   
-    xMarker.attr("x1",xPos).attr("x2",xPos);
-    valueMarker.attr("cx",xPos).attr("cy",yPos);
+//     xMarker.attr("x1",xPos).attr("x2",xPos);
+//     valueMarker.attr("cx",xPos).attr("cy",yPos);
   
-    let txt = "Rank:" + d['Rank'] 
+//     let txt = "Rank:" + d['Rank'] 
 
-    label.text(txt); 
-    if (yPos > lineChartHeight / 2.0 && xPos < lineChartWidth / 2.0) { 
-      label.attr("x",xPos+ 10).attr("y", yPos - 40).attr("text-anchor","start");
-    }
-    else if (yPos > lineChartHeight / 2.0 && xPos > lineChartWidth / 2.0){
-      label.attr("x",xPos- 10).attr("y", yPos - 40).attr("text-anchor","end");
-    }
-    else if (yPos < lineChartHeight / 2.0 && xPos > lineChartWidth / 2.0){
-      label.attr("x",xPos- 10).attr("y", yPos - 40).attr("text-anchor","end");
-    }
-    else { 
-      label.attr("x",xPos + 10).attr("y", yPos + 40).attr("text-anchor","start"); 
-    }
-  });
+//     label.text(txt); 
+//     if (yPos > lineChartHeight / 2.0 && xPos < lineChartWidth / 2.0) { 
+//       label.attr("x",xPos+ 10).attr("y", yPos - 40).attr("text-anchor","start");
+//     }
+//     else if (yPos > lineChartHeight / 2.0 && xPos > lineChartWidth / 2.0){
+//       label.attr("x",xPos- 10).attr("y", yPos - 40).attr("text-anchor","end");
+//     }
+//     else if (yPos < lineChartHeight / 2.0 && xPos > lineChartWidth / 2.0){
+//       label.attr("x",xPos- 10).attr("y", yPos - 40).attr("text-anchor","end");
+//     }
+//     else { 
+//       label.attr("x",xPos + 10).attr("y", yPos + 40).attr("text-anchor","start"); 
+//     }
+//   });
   
   
 
@@ -1049,6 +1179,296 @@ let activeRegion = mouseGroup.append("rect")
 
       updateLineChart()
     }
+
+
+
+    function updateOverallLineChart(){
+      lineLayer.selectAll("*").remove();
+      lineLegend.selectAll("*").remove();
+      var hispanicLineData = bbnames.filter((d)=>{return (d['Year of Birth']>= 2011)
+                                                    && d["Child's First name"]=== chosenName
+                                                    && d["Ethnicity"]=== "HISPANIC"
+                                                    && d['Gender']=== chosenGender
+                                                  });
+      var asianLineData = bbnames.filter((d)=>{return (d['Year of Birth']>= 2011)
+                                                    && d["Child's First name"]=== chosenName
+                                                    && d["Ethnicity"]=== "ASIAN AND PACIFIC ISLANDER"
+                                                    && d['Gender']=== chosenGender
+                                                  });
+      var blackLineData = bbnames.filter((d)=>{return (d['Year of Birth']>= 2011)
+                                                    && d["Child's First name"]=== chosenName
+                                                    && d["Ethnicity"]=== "BLACK NON HISPANIC"
+                                                    && d['Gender']=== chosenGender
+                                                  });
+      var whiteLineData = bbnames.filter((d)=>{return (d['Year of Birth']>= 2011)
+                                                    && d["Child's First name"]=== chosenName
+                                                    && d["Ethnicity"]=== "WHITE NON HISPANIC"
+                                                    && d['Gender']=== chosenGender
+                                                  });
+      hispanicLineData.sort((a,b) => d3.ascending(a['Year of Birth'], b['Year of Birth']));
+      asianLineData.sort((a,b) => d3.ascending(a['Year of Birth'], b['Year of Birth']));
+      blackLineData.sort((a,b) => d3.ascending(a['Year of Birth'], b['Year of Birth']));
+      whiteLineData.sort((a,b) => d3.ascending(a['Year of Birth'], b['Year of Birth']));
+
+
+      var yearScale = d3.scaleLinear().domain([2011, 2017]).range([linePadding,lineChartWidth])
+      var hispanicmaxCount = d3.max(hispanicLineData, (d) => { return Math.max(d["Count"]); });
+      var asianmaxCount = d3.max(asianLineData, (d) => { return Math.max(d["Count"]); });
+      var blackmaxCount = d3.max(blackLineData, (d) => { return Math.max(d["Count"]); });
+      var whitemaxCount = d3.max(whiteLineData, (d) => { return Math.max(d["Count"]); });
+
+      var maxList = [hispanicmaxCount,asianmaxCount,blackmaxCount,whitemaxCount];
+      maxList = maxList.filter( Number );
+
+      var totalMaxCount = Math.max(...maxList);
+      console.log(maxList)
+      console.log(totalMaxCount)
+
+      var countScale = d3.scaleLinear().domain([0,totalMaxCount]).range([lineChartHeight,linePadding])
+
+
+      // Y axis
+      let lineYAxis = d3.axisLeft(countScale)
+      let lineGridlines = d3.axisLeft(countScale)
+                            .tickSize(-lineChartWidth +linePadding)
+                            .tickFormat("")
+      lineLegend.append("g")
+        .attr("class", "y axis")
+        .attr("transform","translate(" + linePadding + ",0)")
+        .call(lineYAxis)
+      lineLegend.append("g")
+        .attr("class", "y gridlines")
+        .attr("transform","translate(" + linePadding + ",0)")
+        .call(lineGridlines);
+
+      let bottomAxis = d3.axisBottom(yearScale).ticks(7).tickFormat(d3.format('d'))
+      // X axis
+      lineLegend.append("g")
+        .attr("transform", "translate(0," + lineChartHeight + ")")
+        .call(bottomAxis);
+
+      
+   
+
+
+      lineGen = d3.line()
+                      .x(function(d) {return yearScale(d['Year of Birth'])})
+                      .y(function(d){return countScale(d['Count'])})
+                      .curve(d3.curveMonotoneX);
+      
+      if(hispanicLineData.length>0){
+        lineLayer.append("path")
+         .datum(hispanicLineData)
+         .attr("class","line")
+         .attr("fill","none")
+         .attr("stroke",d=> genderColorScale(chosenGender))
+         .attr("stroke-width", 4)
+         .attr("d",lineGen);
+
+      lineLayer
+        .selectAll("myPoints")
+        .data(hispanicLineData)
+        .enter()
+        .append("circle")
+          .attr("fill", d=> colorScale(d.Ethnicity))
+          .attr("cx", d=> yearScale(d['Year of Birth']))
+          .attr("cy", d=> countScale(d['Count']) )
+          .attr("r", 6)
+          .attr("stroke", d=> genderColorScale(chosenGender))
+          .attr("stroke-width", 2)
+      }//end of hispanic exist
+
+
+      if(asianLineData.length>0){
+        lineLayer.append("path")
+         .datum(asianLineData)
+         .attr("class","line")
+         .attr("fill","none")
+         .attr("stroke",d=> genderColorScale(chosenGender))
+         .attr("stroke-width", 4)
+         .attr("d",lineGen);
+      lineLayer
+        .selectAll("myPoints")
+        .data(asianLineData)
+        .enter()
+        .append("circle")
+          .attr("fill", d=> colorScale(d.Ethnicity))
+          .attr("cx", d=> yearScale(d['Year of Birth']))
+          .attr("cy", d=> countScale(d['Count']) )
+          .attr("r", 6)
+          .attr("stroke", d=> genderColorScale(chosenGender))
+          .attr("stroke-width", 2)
+      }//end of asian exist
+
+      if(whiteLineData.length>0){
+        lineLayer.append("path")
+         .datum(whiteLineData)
+         .attr("class","line")
+         .attr("fill","none")
+         .attr("stroke",d=> genderColorScale(chosenGender))
+         .attr("stroke-width", 4)
+         .attr("d",lineGen);
+      lineLayer
+        .selectAll("myPoints")
+        .data(whiteLineData)
+        .enter()
+        .append("circle")
+          .attr("fill", d=> colorScale(d.Ethnicity))
+          .attr("cx", d=> yearScale(d['Year of Birth']))
+          .attr("cy", d=> countScale(d['Count']) )
+          .attr("r", 6)
+          .attr("stroke", d=> genderColorScale(chosenGender))
+          .attr("stroke-width", 2)
+
+      }//end of white exist
+
+      if(blackLineData.length>0){
+        lineLayer.append("path")
+         .datum(blackLineData)
+         .attr("class","line")
+         .attr("fill","none")
+         .attr("stroke",d=> genderColorScale(chosenGender))
+         .attr("stroke-width", 4)
+         .attr("d",lineGen);
+      lineLayer
+        .selectAll("myPoints")
+        .data(blackLineData)
+        .enter()
+        .append("circle")
+          .attr("fill", d=> colorScale(d.Ethnicity))
+          .attr("cx", d=> yearScale(d['Year of Birth']))
+          .attr("cy", d=> countScale(d['Count']) )
+          .attr("r", 6)
+          .attr("stroke", d=> genderColorScale(chosenGender))
+          .attr("stroke-width", 2)
+
+      }//end of black exsit
+
+
+      if(asianLineData.length>0){
+        lineLayer
+        .selectAll("myPoints")
+        .data(asianLineData)
+        .enter()
+        .append("text")
+          .attr("x",d=> yearScale(d['Year of Birth'])+10)
+          .attr("y",d=> countScale(d['Count']))
+          .text(d=> d['Count'])
+
+        lineLayer
+        .append("text")
+          .attr("x",yearScale(asianLineData[asianLineData.length -1]['Year of Birth'])+40)
+          .attr("y",countScale(asianLineData[asianLineData.length -1]['Count'])+10)
+          .attr("text-anchor", "start")
+          .text("Asian")
+
+        
+
+      }
+      if(hispanicLineData.length>0){
+        lineLayer
+        .selectAll("myPoints")
+        .data(hispanicLineData)
+        .enter()
+        .append("text")
+          .attr("x",d=> yearScale(d['Year of Birth'])+10)
+          .attr("y",d=> countScale(d['Count']))
+          .text(d=> d['Count'])
+
+        lineLayer
+        .append("text")
+          .attr("x",yearScale(hispanicLineData[hispanicLineData.length -1]['Year of Birth'])+40)
+          .attr("y",countScale(hispanicLineData[hispanicLineData.length -1]['Count']) -10)
+          .attr("text-anchor", "start")
+          .text("Hispanic")
+
+      }
+
+
+      if(whiteLineData.length>0){
+        lineLayer
+        .selectAll("myPoints")
+        .data(whiteLineData)
+        .enter()
+        .append("text")
+          .attr("x",d=> yearScale(d['Year of Birth'])+10)
+          .attr("y",d=> countScale(d['Count']))
+          .text(d=> d['Count'])
+          lineLayer
+        .append("text")
+          .attr("x",yearScale(whiteLineData[whiteLineData.length -1]['Year of Birth'])+40)
+          .attr("y",countScale(whiteLineData[whiteLineData.length - 1]['Count']) -10)
+          .attr("text-anchor", "start")
+          .text("White")
+
+      }
+
+
+
+      if(blackLineData.length>0){
+        lineLayer
+        .selectAll("myPoints")
+        .data(blackLineData)
+        .enter()
+        .append("text")
+          .attr("x",d=> yearScale(d['Year of Birth'])+10)
+          .attr("y",d=> countScale(d['Count']))
+          .text(d=> d['Count'])
+
+        lineLayer
+        .append("text")
+          .attr("x",yearScale(blackLineData[blackLineData.length -1]['Year of Birth'])+40)
+          .attr("y",countScale(blackLineData[blackLineData.length -1]['Count']) + 10)
+          .attr("text-anchor", "start")
+          .text("Black")
+
+      }
+
+
+
+
+
+      
+
+      
+
+
+      
+     
+      
+
+
+      
+      
+
+
+      lineLayer.append("text")
+           .attr('class', 'title')
+           .attr('x', lineChartWidth/2 +linePadding/2)
+           .attr('y', 17)
+           .attr("text-anchor","middle")
+           .attr("font-size",20)
+           .text("Trend of \"" + capitalize(chosenName) + "\" from 2011 to 2017");
+
+      lineLayer.append("text")
+           .attr('x', 15)
+           .attr('y', 35)
+           .text("count")
+
+      
+  
+          
+        
+
+
+
+
+
+    }
+
+
+
+
 
 
 
