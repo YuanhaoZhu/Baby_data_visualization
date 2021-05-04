@@ -171,8 +171,8 @@
 
     .linechart{
       display: flex;
-      justify-content: center;
-      right:10px;
+      justify-content: flex-start;
+      margin-left: 70px
     }
     .bubble{
       /* display: inline-block; */
@@ -296,16 +296,32 @@
       stroke: none;
     }
 
+  .userName{
+    display: flex;
+    justify-content: flex-start;
+    /* margin-left: 50px; */
+  }
+  .col-sm-4{
+    margin-top: 20px;
+  }
+  .rankSlector{
+    display: flex;
+    justify-content: flex-start;
+    margin-left: 20px;
+    margin-bottom: 30px;
+
+  }
+
   </style>
 </head>
 <body>
 
   <div class='vizTitle' style="text-align:center;">
-    <h1>Baby Names and Births in NYC</h1> 
+    <h1>Baby Names and Births in NYC</h1>
   </div>
 
   <div style="padding-left:200px; padding-right:200px;">
-    <p>Choosing a perfect name for your future baby can be an important decision. Should you choose a modern and popular name, should you pick a traditional name that will stand the test of time, or should you select a very unique name?</p> 
+    <p>Choosing a perfect name for your future baby can be an important decision. Should you choose a modern and popular name, should you pick a traditional name that will stand the test of time, or should you select a very unique name?</p>
     <p>Fortunately, we made interactive data visualization to help you choose the perfect name for your future baby. </p>
     <ul>
       <li>Colors in all visualizations are consistently representing ethnicity and gender with the <a href="#legendhere">legend</a> shown below.</li>
@@ -316,7 +332,7 @@
       <li>Move mouse around babies <b style="font-size: 30px">&#128118;&#127995; &#128118;&#127996; &#128118;&#127997; &#128118;&#127998;</b> to see suprise <b style="font-size: 30px">&#127882;</b></li>
     </ul>
     <p>Data were collected through the civil birth registration of New York City from 2011 to 2017.</p>
-    
+
   </div>
 
   <div id="project_container">
@@ -330,22 +346,36 @@
         </div>
       </div>
 
-      <div class="col-sm-4">
-        <div style="background-image: url('2.png');background-width:200px;background-repeat: no-repeat; padding:10px">
-          <h3 style="text-align: left; padding: 5px;margin-left: 30px;">What's your name?</h3>
+    <div class="col-sm-4">
+      <div id="legendhere" class='my-legend' text-align="center">
+          <div class='legend-title'></div>
+          <div class='legend-scale'>
+            <ul class='legend-labels'>
+              <li><span style='background:#FEF1E2;'></span>White Non Hispanic</li>
+              <li><span style='background:#E28E51;'></span>Hispanic</li>
+              <li><span style='background:#934914;'></span>Black Non Hispanic</li>
+              <li><span style='background:#FDDEBB;'></span>Asian and Pacific Islander</li>
+              <li><span style='background:#687980;'></span>other</li>
+              <!-- <li><span></span></li>
+              <li><span style='background:#99ccff;'></span>Male</li>
+              <li><span style='background:#ffc0cb;'></span>Female</li> -->
+            </ul>
+            <ul class='legend-labels'>
+              <li><span style='background:#99ccff;'></span>Male</li>
+              <li><span style='background:#ffc0cb;'></span>Female</li>
+            </ul>
+          </div>
+          </div>
+          </div>
+
+
+        <!-- <div style="background-image: url('2.png');background-width:200px;background-repeat: no-repeat; padding:10px">
+          <h3 style="text-align: left; padding: 5px;margin-left: 30px;">What's your name?</h3> -->
           <!-- <h3 style="text-align: left;">My name is</h3> -->
-        </div>
-        <br>
-        <div style="background-image: url('1.png');background-width:200px;background-repeat: no-repeat; padding:10px">
-          <!-- <h3 style="text-align: right;">What's your name?</h3> -->
-          <h3 style="text-align: left; padding: 5px;margin-right: 30px;">My name is <input type="text" placeholder="e.g.James" id="myInput" style="width: 120px"></h3>
-        </div>
-        <div style="text-align: right">
-          <button id="sendButton"type="button" onclick="location.href='#linechart'">Send</button>
-        </div>
-      </div>
 
+        <!-- </div> -->
 
+      <!-- </div> -->
 
       <div class="col-sm-4">
         <div class='face' id= 'rightbaby' style="background-image: url('rightbaby.png');">
@@ -359,7 +389,7 @@
     </div>
   </div>
 
-  <div id="legendhere" class='my-legend' text-align="center">
+  <!-- <div id="legendhere" class='my-legend' text-align="center">
       <div class='legend-title'></div>
       <div class='legend-scale'>
         <ul class='legend-labels'>
@@ -373,7 +403,7 @@
           <li><span style='background:#ffc0cb;'></span>Female</li>
         </ul>
       </div>
-      </div>
+      </div> -->
 
 
 
@@ -387,15 +417,15 @@
   </div>
   </div> -->
 
-  <div id="sticky" style="background-color:#FAF8F3; padding-top: 20px">
-    <div class= "slider" id="yearSlider" ><h5>Choose a rank
-       <select id="selectRank"><option value="none" selected disabled hidden>Select</option></select></h5><h5 style="margin-left: 40px"></h5></div>
+  <!-- <div id="sticky" style="background-color:#FAF8F3; padding-top: 20px"> -->
+    <div class= "slider" id="yearSlider" > </div>
    <!--  <div class="rankSlector" style="margin-left: 200px;margin-bottom: 10px">
       <h5>Choose a rank
        <select id="selectRank"><option value="none" selected disabled hidden>Select</option></select></h5>
     </div> -->
-
-      
+    <div class="rankSlector" style="margin-left: 200px;margin-bottom: 10px">
+    <h5>Choose a rank
+       <select id="selectRank"><option value="none" selected disabled hidden>Select</option></select></h5><h5 style="margin-left: 40px"></h5>
   </div>
 
  <!--  <div class="slidecontainer">
@@ -423,6 +453,11 @@
 </div>
 
 <div id="linechart"class="linechart">
+  <div class="userName" style="background-image: url('1.png');background-width:50px;background-repeat: no-repeat; padding:10px">
+    <h3 style="text-align: left; padding: 5px;margin-right: 30px;">Try your name <input type="text" placeholder="e.g.James" id="myInput" style="width: 100px"></h3>
+    <div style="text-align: right">
+      <button id="sendButton"type="button" onclick="location.href='#linechart'">Send</button>
+    </div>
   <div class="line" text-align="center"><svg id="lineGraph" width="600" height="400" style="background: #sff; " ></svg></div>
 </div>
 
@@ -514,7 +549,7 @@
                                                     && d["Ethnicity"]=== chosenEthnicity
                                                     && d['Gender']=== chosenGender
                                                   });
-      
+
       var hispanicLineData = bbnames.filter((d)=>{return (d['Year of Birth']>= 2011)
                                                     && d["Child's First name"]=== chosenName
                                                     && d["Ethnicity"]=== "HISPANIC"
@@ -571,9 +606,9 @@
 
 
       // function getInputValue(){
-      //       // Selecting the input element and get its value 
+      //       // Selecting the input element and get its value
       //       var inputVal = document.getElementById("myInput").value;
-            
+
       //       // Displaying the value
       //       chosenName = inputVal.toUpperCase()
       //   }
@@ -581,7 +616,7 @@
     d3.select("#sendButton").on("click", function(d) {
         inputVal =  document.getElementById("myInput").value
         chosenName = inputVal.toUpperCase()
-        
+
         groupbyNamesNEW = groupbyNames.filter((d)=>d.key===chosenName)
         groupbyNamesNEW.sort((a,b) => d3.ascending(a['Count'], b['Count']));
 
@@ -919,7 +954,7 @@ d3.select('#yearSlider')
           .attr("stroke", d=> genderColorScale(chosenGender))
           .attr("stroke-width", 2)
 
-      
+
 
 
       lineLayer.append("path")
@@ -940,7 +975,7 @@ d3.select('#yearSlider')
           .attr("r", 6)
           .attr("stroke", d=> genderColorScale(chosenGender))
           .attr("stroke-width", 2)
-     
+
 
       lineLayer.append("path")
          .datum(whiteLineData)
@@ -960,7 +995,7 @@ d3.select('#yearSlider')
           .attr("r", 6)
           .attr("stroke", d=> genderColorScale(chosenGender))
           .attr("stroke-width", 2)
-      
+
 
 
       lineLayer.append("path")
@@ -981,7 +1016,7 @@ d3.select('#yearSlider')
           .attr("r", 6)
           .attr("stroke", d=> genderColorScale(chosenGender))
           .attr("stroke-width", 2)
-      
+
  lineLayer
         .selectAll("myPoints")
         .data(asianLineData)
@@ -1076,7 +1111,7 @@ d3.select('#yearSlider')
 //     .attr("y1",0)
 //     .attr("y2",lineChartHeight)
 //     .attr("visibility","hidden");
-  
+
 //   let valueMarker = mouseGroup.append("circle")
 //     .attr("id","valueMarker")
 //     .attr("fill","none")
@@ -1084,7 +1119,7 @@ d3.select('#yearSlider')
 //     .attr("stroke-width",2)
 //     .attr("r",10)
 //     .attr("visibility","hidden");
-  
+
 //   let label = mouseGroup.append("text")
 //     .attr("id","label")
 //     .attr("visibility","hidden");
@@ -1099,20 +1134,20 @@ d3.select('#yearSlider')
 
 
 //   let findDate = d3.bisector( d => d['Year of Birth'] ).right;
-  
+
 //   // activeRegion is now the top-most item (even if invisible), so it should always catch the mouse events and never clash
 //   activeRegion.on("mouseover", function() {
 //     // Show the marker and label when mousing over
 //     xMarker.attr("visibility","");
 //     valueMarker.attr("visibility","");
-//     label.attr("visibility",""); 
+//     label.attr("visibility","");
 //   });
 
 //   activeRegion.on("mouseout", function() {
 //     // Hide them when mousing out of chart
 //     xMarker.attr("visibility","hidden");
 //     valueMarker.attr("visibility","hidden");
-//     label.attr("visibility","hidden"); 
+//     label.attr("visibility","hidden");
 //   });
 
 //   activeRegion.on("mousemove", function(evt) {
@@ -1122,17 +1157,17 @@ d3.select('#yearSlider')
 //     let index = findDate(nameLineData, xDate);
 
 //     let d = nameLineData[index];
-  
+
 //     let xPos = yearScale(d['Year of Birth'])
 //     let yPos = countScale(d['Count']);
-  
+
 //     xMarker.attr("x1",xPos).attr("x2",xPos);
 //     valueMarker.attr("cx",xPos).attr("cy",yPos);
-  
-//     let txt = "Rank:" + d['Rank'] 
 
-//     label.text(txt); 
-//     if (yPos > lineChartHeight / 2.0 && xPos < lineChartWidth / 2.0) { 
+//     let txt = "Rank:" + d['Rank']
+
+//     label.text(txt);
+//     if (yPos > lineChartHeight / 2.0 && xPos < lineChartWidth / 2.0) {
 //       label.attr("x",xPos+ 10).attr("y", yPos - 40).attr("text-anchor","start");
 //     }
 //     else if (yPos > lineChartHeight / 2.0 && xPos > lineChartWidth / 2.0){
@@ -1141,12 +1176,12 @@ d3.select('#yearSlider')
 //     else if (yPos < lineChartHeight / 2.0 && xPos > lineChartWidth / 2.0){
 //       label.attr("x",xPos- 10).attr("y", yPos - 40).attr("text-anchor","end");
 //     }
-//     else { 
-//       label.attr("x",xPos + 10).attr("y", yPos + 40).attr("text-anchor","start"); 
+//     else {
+//       label.attr("x",xPos + 10).attr("y", yPos + 40).attr("text-anchor","start");
 //     }
 //   });
-  
-  
+
+
 
 
 
@@ -1248,15 +1283,15 @@ d3.select('#yearSlider')
         .attr("transform", "translate(0," + lineChartHeight + ")")
         .call(bottomAxis);
 
-      
-   
+
+
 
 
       lineGen = d3.line()
                       .x(function(d) {return yearScale(d['Year of Birth'])})
                       .y(function(d){return countScale(d['Count'])})
                       .curve(d3.curveMonotoneX);
-      
+
       if(hispanicLineData.length>0){
         lineLayer.append("path")
          .datum(hispanicLineData)
@@ -1363,7 +1398,7 @@ d3.select('#yearSlider')
           .attr("text-anchor", "start")
           .text("Asian")
 
-        
+
 
       }
       if(hispanicLineData.length>0){
@@ -1429,18 +1464,18 @@ d3.select('#yearSlider')
 
 
 
-      
-
-      
 
 
-      
-     
-      
 
 
-      
-      
+
+
+
+
+
+
+
+
 
 
       lineLayer.append("text")
@@ -1456,10 +1491,10 @@ d3.select('#yearSlider')
            .attr('y', 35)
            .text("count")
 
-      
-  
-          
-        
+
+
+
+
 
 
 
@@ -1512,7 +1547,7 @@ d3.select('#yearSlider')
           .attr("r", 6)
           .attr("stroke", d=> genderColorScale(chosenGender))
           .attr("stroke-width", 2)
-      
+
 
       lineLayer.append("text")
            .attr('class', 'title')
@@ -1550,7 +1585,7 @@ d3.select('#yearSlider')
     .attr("y1",0)
     .attr("y2",lineChartHeight)
     .attr("visibility","hidden");
-  
+
   let valueMarker = mouseGroup.append("circle")
     .attr("id","valueMarker")
     .attr("fill","none")
@@ -1558,7 +1593,7 @@ d3.select('#yearSlider')
     .attr("stroke-width",2)
     .attr("r",10)
     .attr("visibility","hidden");
-  
+
   let label = mouseGroup.append("text")
     .attr("id","label")
     .attr("visibility","hidden");
@@ -1573,20 +1608,20 @@ let activeRegion = mouseGroup.append("rect")
 
 
   let findDate = d3.bisector( d => d['Year of Birth'] ).right;
-  
+
   // activeRegion is now the top-most item (even if invisible), so it should always catch the mouse events and never clash
   activeRegion.on("mouseover", function() {
     // Show the marker and label when mousing over
     xMarker.attr("visibility","");
     valueMarker.attr("visibility","");
-    label.attr("visibility",""); 
+    label.attr("visibility","");
   });
 
   activeRegion.on("mouseout", function() {
     // Hide them when mousing out of chart
     xMarker.attr("visibility","hidden");
     valueMarker.attr("visibility","hidden");
-    label.attr("visibility","hidden"); 
+    label.attr("visibility","hidden");
   });
 
   activeRegion.on("mousemove", function(evt) {
@@ -1596,17 +1631,17 @@ let activeRegion = mouseGroup.append("rect")
     let index = findDate(nameLineData, xDate);
 
     let d = nameLineData[index];
-  
+
     let xPos = yearScale(d['Year of Birth'])
     let yPos = countScale(d['Count']);
-  
+
     xMarker.attr("x1",xPos).attr("x2",xPos);
     valueMarker.attr("cx",xPos).attr("cy",yPos);
-  
-    let txt = "Rank:" + d['Rank'] 
 
-    label.text(txt); 
-    if (yPos > lineChartHeight / 2.0 && xPos < lineChartWidth / 2.0) { 
+    let txt = "Rank:" + d['Rank']
+
+    label.text(txt);
+    if (yPos > lineChartHeight / 2.0 && xPos < lineChartWidth / 2.0) {
       label.attr("x",xPos+ 10).attr("y", yPos - 40).attr("text-anchor","start");
     }
     else if (yPos > lineChartHeight / 2.0 && xPos > lineChartWidth / 2.0){
@@ -1615,8 +1650,8 @@ let activeRegion = mouseGroup.append("rect")
     else if (yPos < lineChartHeight / 2.0 && xPos > lineChartWidth / 2.0){
       label.attr("x",xPos- 10).attr("y", yPos - 40).attr("text-anchor","end");
     }
-    else { 
-      label.attr("x",xPos + 10).attr("y", yPos + 40).attr("text-anchor","start"); 
+    else {
+      label.attr("x",xPos + 10).attr("y", yPos + 40).attr("text-anchor","start");
     }
   });
 
